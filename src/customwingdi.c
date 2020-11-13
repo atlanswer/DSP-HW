@@ -2,46 +2,55 @@
 
 /* Create an empty bitmap,
  * The number of planes must be set to 1,
- * The number of bits-per-pixel is 8.
+ * The number of bits-per-pixel must be 8.
  */
 BITMAP CreateBitmap(int nWidth, int nHeight,
-                    UINT nPlanes, UINT nBitCount,
-                    const VOID* lpBits) {
+                    const PBITMAP pbmo) {
     // Assertion: Image format.
     assert(nWidth > 0);
     assert(nHeight > 0);
-    assert(nPlanes == 1);
-    assert(nBitCount == 8);
-    assert(lpBits == NULL);
+    assert(pbmo != NULL);
     // Create an empty bitmap.
     BITMAP bm;
     // Set BITMAPFILEHEADER.
-    bm.bmfh = (BITMAPFILEHEADER) {
-        19778,
-        263224,
-        0,
-        0,
-        1078
-    };
+    bm.bmfh = pbmo->bmfh;
     // Set BITMAPINFOHEADER.
-    bm.bmi.bmiHeader = (BITMAPINFOHEADER) {
-        40,
-        nWidth,
-        nHeight,
-        nPlanes,
-        nBitCount,
-        0,
-        262146,
-        2834,
-        2834,
-        0,
-        0
-    };
+    bm.bmi.bmiHeader = pbmo->bmi.bmiHeader;
+    bm.bmi.bmiHeader.biWidth = nWidth;
+    bm.bmi.bmiHeader.biHeight = nHeight;
+    // 8 bit image only
+    bm.bmi.bmiHeader.biSizeImage = nWidth * nHeight;
     // Set RGBQUAD array.
-    bm.bmi.bmiColors = NULL;
+    bm.bmi.bmiColors = pbmo->bmi.bmiColors;
     // Set color-index array.
-    bm.bmcia = NULL;
+    // Allocate memory for the color-index array.
+    size_t sizepix = sizeof(BYTE) * bm.bmi.bmiHeader.biHeight
+                     * bm.bmi.bmiHeader.biWidth;
+    size_t sizecia = sizeof(BYTE*) * bm.bmi.bmiHeader.biHeight
+                     + sizepix;
+    bm.bmcia = malloc(sizecia);
+    // Calculate the file size.
+    bm.bmfh.bfSize = bm.bmi.bmiHeader.biSizeImage
+                     + bm.bmfh.bfOffBits;
+    printf("Size: %d\n", bm.bmfh.bfSize);
     return bm;
+}
+
+// Bilinear image interpolation implementation
+BITMAP StretchBlt(PBITMAP pbm, float scale) {
+    LONG oW = pbm->bmi.bmiHeader.biWidth;
+    LONG oH = pbm->bmi.bmiHeader.biHeight;
+    LONG nW = ceil(oW * scale);
+    LONG nH = ceil(oH * scale);
+    BITMAP ximg = CreateBitmap(nW, nH, pbm);
+    // Shortcut to the color-index array.
+    BYTE** oi = pbm->bmcia;
+    BYTE** xi = ximg.bmcia;
+    // Bilinear interpolation.
+
+    
+
+    return ximg;
 }
 
 // Read a bitmap, 8 bits image only.

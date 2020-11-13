@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <math.h>
 // Custom headers
 #include "customwindef.h"
 
@@ -110,13 +111,11 @@ typedef struct tagBITMAP {
     BYTE**              bmcia;
 } BITMAP, *PBITMAP;
 
-// Healper functions:
 /* Create a bitmap.
  * https://docs.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-createbitmap
  */
 BITMAP CreateBitmap(int nWidth, int nHeight,
-                    UINT nPlanes, UINT nBitCount,
-                    const VOID* lpBits);
+                    const PBITMAP pbmo);
 /* The GetDIBColorTable function retrieves RGB
  * (red, green, blue) color values from a range
  * of entries in the color table of the DIB section
@@ -143,12 +142,6 @@ int GetBIBits(PBITMAP pbm, UINT start, UINT cLines,
  */
 int SetDIBits(PBITMAP pbm, UINT start, UINT cLines,
               const VOID* pBits, const PBITMAPINFO pbmi);
-// Read a bitmap.
-BITMAP bmRead(const char* filename);
-// Destory a bitmap
-void bmDel(const PBITMAP pbm);
-// Save a bitmap
-void bmSave(const PBITMAP pbm, const char* filename);
 /* The StretchBlt function copies a bitmap from a
  * source rectangle into a destination rectangle,
  * stretching or compressing the bitmap to fit
@@ -157,6 +150,14 @@ void bmSave(const PBITMAP pbm, const char* filename);
  * HEAVILY MODIFIED: Using bilinear method to
  * interpolate the image.
  */
-void StretchBlt(PBITMAP);
+BITMAP StretchBlt(PBITMAP, float);
+
+// Custom healper functions:
+// Read a bitmap.
+BITMAP bmRead(const char* filename);
+// Destory a bitmap
+void bmDel(const PBITMAP pbm);
+// Save a bitmap
+void bmSave(const PBITMAP pbm, const char* filename);
 
 #endif
