@@ -14,10 +14,10 @@ int main(void) {
     printf("Read image completed.\n");
 
     // Process
-    BITMAP ximg = CreateBitmap(512, 512, &oimg);
+    BITMAP ximg = StretchBlt(&oimg, 0.1);
 
     // Save the image.
-    bmSave(&ximg, "nimg.bmp");
+    bmSave(&ximg, "ximg.bmp");
     printf("The image was saved.\n");
 
     // Release Image

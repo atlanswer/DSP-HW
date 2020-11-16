@@ -29,10 +29,22 @@ BITMAP CreateBitmap(int nWidth, int nHeight,
     size_t sizecia = sizeof(BYTE*) * bm.bmi.bmiHeader.biHeight
                      + sizepix;
     bm.bmcia = malloc(sizecia);
+    // Assertion: allocation succeed.
+    assert(bm.bmcia != NULL);
+    /* The first part is an array of pointers to pointers to rows.
+     * The second part is the actual data, referenced by
+     * aforementioned row pointers.
+     */
+    // Set the pointers to the correct positions
+    size_t row = bm.bmi.bmiHeader.biHeight - 1;
+    bm.bmcia[row] = (BYTE*) (bm.bmcia + bm.bmi.bmiHeader.biHeight);
+    for (; row != SIZE_MAX;) {
+        bm.bmcia[row] = bm.bmcia[row--]
+                        + bm.bmi.bmiHeader.biWidth;
+    }
     // Calculate the file size.
     bm.bmfh.bfSize = bm.bmi.bmiHeader.biSizeImage
                      + bm.bmfh.bfOffBits;
-    printf("Size: %d\n", bm.bmfh.bfSize);
     return bm;
 }
 
@@ -48,7 +60,16 @@ BITMAP StretchBlt(PBITMAP pbm, float scale) {
     BYTE** xi = ximg.bmcia;
     // Bilinear interpolation.
 
-    
+    LONG ridx = 0;
+    LONG cidx = 0;
+    for (ridx = 25; cidx < nW; ++cidx) {
+        xi[ridx][cidx] = 255;
+    }
+    cidx = 25;
+    ridx = 0;
+    for (; ridx < nH; ++ridx) {
+        xi[ridx][cidx] = 255;
+    }
 
     return ximg;
 }
