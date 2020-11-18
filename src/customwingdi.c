@@ -62,13 +62,11 @@ BITMAP StretchBlt(PBITMAP pbm, float scale) {
 
     LONG ridx = 0;
     LONG cidx = 0;
-    for (ridx = 25; cidx < nW; ++cidx) {
-        xi[ridx][cidx] = 255;
-    }
-    cidx = 25;
-    ridx = 0;
-    for (; ridx < nH; ++ridx) {
-        xi[ridx][cidx] = 255;
+    for (ridx = 0; ridx < nH; ++ridx) {
+        float oridx = ((float) ridx + 0.5) / scale - 0.5;
+        for (cidx = 0; cidx < nW; ++ cidx) {
+            float ocidx = ((float) cidx + 0.5) / scale - 0.5;
+        }
     }
 
     return ximg;
