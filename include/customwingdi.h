@@ -1,4 +1,14 @@
-/* customwingdi.h - Bitmap Header Definition */
+/**
+ * @file customwingdi.h
+ * @author Atlanswer (atlanswer@gmail.com)
+ * @brief Bitmap Header Definition.
+ * @version 0.1
+ * @date 2020-11-19
+ * 
+ * @copyright Copyright (c) 2020
+ * @see https://docs.microsoft.com/en-us/windows/win32/gdi/bitmaps
+ * 
+ */
 
 // System headers
 #include <stdio.h>
@@ -16,133 +26,193 @@
 
 #ifndef _CUSTOM_WINGDI_
 #define _CUSTOM_WINGDI_
-/* Structure-Layout Pragma
- * Pushes the current alignment setting on
- * an internal stack and then optionally
- * sets the new alignment.
- * https://en.cppreference.com/w/c/preprocessor/impl
- */ 
+
+/**
+ * @brief Structure-Layout Pragma
+ * Pushes the current alignment setting on an internal
+ * stack and then optionally sets the new alignment.
+ * @see https://en.cppreference.com/w/c/preprocessor/impl
+ * 
+ */
 #pragma pack(push, 1)
 
-// https://github.com/opencv/opencv/blob/master/modules/imgproc/src/resize.cpp#L905
+/**
+ * @brief WIP
+ * @see https://github.com/opencv/opencv/blob/master/modules/imgproc/src/resize.cpp#L905
+ * 
+ */
 extern const INT INTER_RESIZE_COEF_BITS;
 extern const INT INTER_RESIZE_COEF_SCALE;
 extern const INT CAST_BITS;
 
-/* The BITMAPFILEHEADER structure contains information
- * about the type, size, and layout of a file that
- * contains a DIB.
- * https://docs.microsoft.com/en-us/windows/win32/api/wingdi/ns-wingdi-bitmapfileheader
+/**
+ * Information about the type, size,
+ * and layout of a file that contains a DIB.
+ * 
+ * @brief BITMAPFILEHEADER structure
+ * @see https://docs.microsoft.com/en-us/windows/win32/api/wingdi/ns-wingdi-bitmapfileheader
+ * 
  */
 typedef struct tagBITMAPFILEHEADER {
-    // The file type; must be BM.
+    /// The file type; must be BM.
     WORD    bfType;
-    // The size, in bytes, of the bitmap file.
+    /// The size, in bytes, of the bitmap file.
     DWORD   bfSize;
-    // Reserved, must be zero.
+    /// Reserved, must be zero.
     WORD    bfReserved1;
-    // Reserved, must be zero.
+    /// Reserved, must be zero.
     WORD    bfReserved2;
-    // The offset, in bytes, from the
-    // beginning of the BITMAPFILEHEADER
-    // structure to the bitmap bits.
+    /**
+     * The offset, in bytes, from the
+     * beginning of the BITMAPFILEHEADER
+     * structure to the bitmap bits.
+     * 
+     */
     DWORD bfOffBits; 
 } BITMAPFILEHEADER, *PBITMAPFILEHEADER;
 
-/* The BITMAPINFOHEADER structure contains information
- * about the dimensions and color format of a DIB.
- * https://docs.microsoft.com/en-us/previous-versions//dd183376(v=vs.85)
+/**
+ * Contains information about
+ * the dimensions and color format of a DIB.
+ * 
+ * @brief BITMAPINFOHEADER structure
+ * @see https://docs.microsoft.com/en-us/previous-versions//dd183376(v=vs.85)
+ * 
  */
 typedef struct tagBITMAPINFOHEADER {
-    // The number of bytes required by the structure.
+    /// The number of bytes required by the structure.
     DWORD   biSize;
-    // The width of the bitmap, in pixels.
+    /// The width of the bitmap, in pixels.
     LONG    biWidth;
-    // The height of the bitmap, in pixels.
+    /// The height of the bitmap, in pixels.
     LONG    biHeight;
-    // The number of planes for the target device.
-    // This value must be set to 1.
+    /**
+     * The number of planes for the target device.
+     * This value must be set to 1.
+     */
     WORD    biPlanes;
-    // The number of bits-per-pixel.
+    /// The number of bits-per-pixel.
     WORD    biBitCount;
-    // The type of compression for a compressed bottom-up bitmap.
+    /// The type of compression for a compressed bottom-up bitmap.
     DWORD   biCompression;
-    // The size, in bytes, of the image. This may be set to zero for BI_RGB bitmaps.
+    /// The size, in bytes, of the image. This may be set to zero for BI_RGB bitmaps.
     DWORD   biSizeImage;
-    // The horizontal resolution, in pixels-per-meter, of the target device for the bitmap.
+    /// The horizontal resolution, in pixels-per-meter, of the target device for the bitmap.
     LONG    biXPelsPerMeter;
-    // The vertical resolution, in pixels-per-meter, of the target device for the bitmap.
+    /// The vertical resolution, in pixels-per-meter, of the target device for the bitmap.
     LONG    biYPelsPerMeter;
-    // The number of color indexes in the color table that are actually used by the bitmap.
+    /// The number of color indexes in the color table that are actually used by the bitmap.
     DWORD   biClrUsed;
-    // The number of color indexes that are required for displaying the bitmap.
+    /// The number of color indexes that are required for displaying the bitmap.
     DWORD   biClrImportant;
 } BITMAPINFOHEADER, *PBITMAPINFOHEADER;
 
-/*
- * The RGBQUAD structure describes a color
- * consisting of relative intensities of
- * red, green, and blue.
- * https://docs.microsoft.com/en-us/windows/win32/api/wingdi/ns-wingdi-rgbquad
+/**
+ * Describes a color consisting of relative
+ * intensities of red, green, and blue.
+ * 
+ * @brief RGBQUAD structure
+ * @see https://docs.microsoft.com/en-us/windows/win32/api/wingdi/ns-wingdi-rgbquad
+ * 
  */
 typedef struct tagRGBQUAD {
-    // The intensity of blue in the color.
+    /// The intensity of blue in the color.
     BYTE    rgbBlue;
-    // The intensity of green in the color.
+    /// The intensity of green in the color.
     BYTE    rgbGreen;
-    // The intensity of red in the color.
+    /// The intensity of red in the color.
     BYTE    rgbRed;
-    // This member is reserved and must be zero.
+    /// This member is reserved and must be zero.
     BYTE    rgbReserved;
 } RGBQUAD, *PRGBQUAD;
 
-/* The BITMAPINFO structure defines the
- * dimensions and color information for a DIB.
+/**
+ * Defines the dimensions and color information for a DIB.
+ * 
+ * @brief BITMAPINFO structure
+ * @see https://docs.microsoft.com/en-us/windows/win32/api/wingdi/ns-wingdi-bitmapinfo
+ * 
  */
 typedef struct tagBITMAPINFO {
-    /* A BITMAPINFOHEADER structure that contains
+    /**
+     * A BITMAPINFOHEADER structure that contains
      * information about the dimensions of color format.
-     * https://docs.microsoft.com/en-us/windows/win32/api/wingdi/ns-wingdi-bitmapinfo
-     * MODIFIED
      */
     BITMAPINFOHEADER    bmiHeader;
-    // An array of RGBQUAD.
+    /// An array of RGBQUAD.
     PRGBQUAD            bmiColors;
 } BITMAPINFO, *PBITMAPINFO;
 
-/* The BITMAP structure defines a bitmap.
- * Custom structure, works only for 8 bits bitmap.
+/**
+ * Defines a bitmap.
+ * @warning Custom structure, works only for 8 bits bitmap.
+ * @brief BITMAP structure
+ * 
  */
 typedef struct tagBITMAP {
     BITMAPFILEHEADER    bmfh;
     BITMAPINFO          bmi;
-    // Bitmap color-index array.
-    // https://docs.microsoft.com/en-us/windows/win32/gdi/bitmap-storage
+    /**
+     * @brief Bitmap color-index array
+     * @see https://docs.microsoft.com/en-us/windows/win32/gdi/bitmap-storage
+     */
     BYTE**              bmcia;
 } BITMAP, *PBITMAP;
 
-/* Create a bitmap.
- * https://docs.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-createbitmap
+/**
+ * @brief Create a Bitmap object.
+ * 
+ * @param nWidth The bitmap width, in pixels.
+ * @param nHeight The bitmap height, in pixels.
+ * @param pbmo A pointer to an existing bitmap,
+ *  new image copys its properties.
+ * @return BITMAP 
+ * 
+ * @see https://docs.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-createbitmap
+ * @warning The number of planes must be set to 1,
+ *  The number of bits-per-pixel must be 8.
+ * 
  */
 BITMAP CreateBitmap(int nWidth, int nHeight,
                     const PBITMAP pbmo);
 
-/* The StretchBlt function copies a bitmap from a
- * source rectangle into a destination rectangle,
- * stretching or compressing the bitmap to fit
- * the dimensions of the destination rectangle, if necessary.
- * https://docs.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-stretchblt
- * HEAVILY MODIFIED: Using bilinear method to
- * interpolate the image.
+/**
+ * @brief Resize a image using bilinear interpolation.
+ * 
+ * @param pbm The pointer to the original image.
+ * @param scale Resize factor.
+ * @return BITMAP The interpolated image.
+ * 
+ * @see https://docs.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-stretchblt
+ * @warning This function has nothing to do with the wingdi.h version.
  */
-BITMAP StretchBlt(PBITMAP, float);
+BITMAP StretchBlt(PBITMAP pbm, float scale);
 
 // Custom healper functions:
-// Read a bitmap.
+
+/**
+ * @brief Read a bitmap file.
+ * 
+ * @param filename The bitmap filepath.
+ * @return BITMAP The formatted image struct.
+ *  
+ * @warning 8 bits image only.
+ */
 BITMAP bmRead(const char* filename);
-// Destory a bitmap, release the memory previously allocated.
+
+/**
+ * @brief Destory a bitmap, release the memory previously allocated.
+ * 
+ * @param pbm The pointer to the bitmap struct.
+ */
 void bmDel(const PBITMAP pbm);
-// Save a bitmap.
+
+/**
+ * @brief Save a bitmap.
+ * 
+ * @param pbm The pointer to the bitmap struct.
+ * @param filename The output filepath 
+ */
 void bmSave(const PBITMAP pbm, const char* filename);
 
 #endif /* _CUSTOM_WINGDI_ */

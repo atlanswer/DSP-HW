@@ -1,17 +1,24 @@
+/**
+ * @file customwingdi.c
+ * @author Atlanswer (atlanswer@gmail.com)
+ * @brief Custom bitmap processing functions.
+ * @version 0.1
+ * @date 2020-11-19
+ * 
+ * @copyright Copyright (c) 2020
+ * 
+ */
+
 #ifndef _CUSTOM_WINGDI_
 #include "customwingdi.h"
 #endif
 
 const INT INTER_RESIZE_COEF_BITS = 11;
-// const INT INTER_RESIZE_COEF_SCALE = 1 << INTER_RESIZE_COEF_BITS;
+/// const INT INTER_RESIZE_COEF_SCALE = 1 << INTER_RESIZE_COEF_BITS;
 const INT INTER_RESIZE_COEF_SCALE = 1 << 11;
-// const INT CAST_BITS = INTER_RESIZE_COEF_BITS << 1;
+/// const INT CAST_BITS = INTER_RESIZE_COEF_BITS << 1;
 const INT CAST_BITS = 11 << 1;
 
-/* Create an empty bitmap,
- * The number of planes must be set to 1,
- * The number of bits-per-pixel must be 8.
- */
 BITMAP CreateBitmap(int nWidth, int nHeight,
                     const PBITMAP pbmo) {
     // Assertion: Image format.
@@ -60,7 +67,6 @@ BITMAP CreateBitmap(int nWidth, int nHeight,
     return bm;
 }
 
-// Bilinear image interpolation implementation
 BITMAP StretchBlt(PBITMAP pbm, float scale) {
     LONG oW = pbm->bmi.bmiHeader.biWidth;
     LONG oH = pbm->bmi.bmiHeader.biHeight;
@@ -137,7 +143,6 @@ BITMAP StretchBlt(PBITMAP pbm, float scale) {
     return ximg;
 }
 
-// Read a bitmap, 8 bits image only.
 BITMAP bmRead(const char* filename) {
     // Open file stream, binary read mode.
     FILE* pImg = fopen(filename, "rb");
@@ -210,7 +215,6 @@ BITMAP bmRead(const char* filename) {
     return bm;
 }
 
-// Release the memory previously allocated.
 void bmDel(const PBITMAP pbm) {
     // Deallocates the memory and dereferences the pointers.
     free(pbm->bmi.bmiColors);
@@ -219,7 +223,6 @@ void bmDel(const PBITMAP pbm) {
     pbm->bmcia = NULL;
 }
 
-// Save a bitmap to a file
 void bmSave(const PBITMAP pbm, const char* filename) {
     // Open file stream, binary write mode.
     FILE* pImg = fopen(filename, "wb");

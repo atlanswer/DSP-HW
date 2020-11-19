@@ -1,23 +1,39 @@
 /**
  * @file custommath.h
- * @author Atlanswer (you@domain.com)
- * @brief Common mathematical functions
+ * @author Atlanswer (atlanswer@gmail.com)
+ * @brief Common mathematical functions.
  * @version 0.1
  * @date 2020-11-19
  * 
  * @copyright Copyright (c) 2020
+ * @see https://www.khronos.org/files/opencl-quick-reference-card.pdf
  * 
  */
 
 #ifndef _CUSTOM_MATH_
 #define _CUSTOM_MATH_
 
+/**
+ * @brief Macro function, determine if odd or not.
+ * 
+ */
 #define is_odd(x) x & 1 
 
-// Min of x and y
+/**
+ * @brief Min of x and y.
+ * 
+ * @param x 
+ * @param y 
+ * @return int 
+ */
 int min(int x, int y);
 
-// Round integer to nearest even integer
+/**
+ * @brief Round integer to nearest even integer.
+ * 
+ * @param arg 
+ * @return int 
+ */
 int rint(float arg);
 
 #endif /* _CUSTOM_MATH_ */

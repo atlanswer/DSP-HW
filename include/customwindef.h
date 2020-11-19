@@ -1,4 +1,14 @@
-/* customminwindef.h - Basic Windows Type Definitions. */
+/**
+ * @file customwindef.h
+ * @author Atlanswer (atlanswer@gmail.com)
+ * @brief Basic Windows Type Definitions.
+ * @version 0.1
+ * @date 2020-11-19
+ * 
+ * @copyright Copyright (c) 2020
+ * @see https://docs.microsoft.com/en-us/windows/win32/winprog/windows-data-types
+ * 
+ */
 
 #ifndef _CUSTOM_WINDEF_
 #define _CUSTOM_WINDEF_

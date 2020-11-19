@@ -1,3 +1,14 @@
+/**
+ * @file custommath.c
+ * @author Atlanswer (atlanswer@gmail.com)
+ * @brief Custom math function implementations.
+ * @version 0.1
+ * @date 2020-11-19
+ * 
+ * @copyright Copyright (c) 2020
+ * 
+ */
+
 #ifndef _CUSTOM_MATH_
 #include "custommath.h"
 #endif
