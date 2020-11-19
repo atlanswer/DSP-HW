@@ -27,13 +27,17 @@ BITMAP CreateBitmap(int nWidth, int nHeight,
     bm.bmi.bmiHeader.biWidth = nWidth;
     bm.bmi.bmiHeader.biHeight = nHeight;
     // 8 bit image only
-    bm.bmi.bmiHeader.biSizeImage = nWidth * nHeight;
+    // https://docs.microsoft.com/en-us/windows/win32/gdi/storing-an-image
+    // The width must be DWORD aligned unless the bitmap is RLE 
+    // compressed.
+    LONG storageWidth = ((nWidth * 8 + 31) & ~31) / 8;
+    bm.bmi.bmiHeader.biSizeImage = storageWidth * nHeight;
     // Set RGBQUAD array.
     bm.bmi.bmiColors = pbmo->bmi.bmiColors;
     // Set color-index array.
     // Allocate memory for the color-index array.
     size_t sizepix = sizeof(BYTE) * bm.bmi.bmiHeader.biHeight
-                     * bm.bmi.bmiHeader.biWidth;
+                     * storageWidth;
     size_t sizecia = sizeof(BYTE*) * bm.bmi.bmiHeader.biHeight
                      + sizepix;
     bm.bmcia = malloc(sizecia);
@@ -47,18 +51,17 @@ BITMAP CreateBitmap(int nWidth, int nHeight,
     size_t row = bm.bmi.bmiHeader.biHeight - 1;
     bm.bmcia[row] = (BYTE*) (bm.bmcia + bm.bmi.bmiHeader.biHeight);
     for (; row != 0;) {
-        bm.bmcia[row] = bm.bmcia[row--]
-                        + bm.bmi.bmiHeader.biWidth;
+        bm.bmcia[row] = bm.bmcia[row--] + storageWidth;
     }
     // Calculate the file size.
     bm.bmfh.bfSize = bm.bmi.bmiHeader.biSizeImage
                      + bm.bmfh.bfOffBits;
     
-    // int i = 0;
-    // int j = 0;
-    // for (i = 0; i < 25; ++i) {
-    //     bm.bmcia[23][i] = 50 + i * 5;
-    // }
+    int i = 0;
+    int j = 0;
+    for (i = 0; i < 25; ++i) {
+        bm.bmcia[i][i] = 50 + i * 5;
+    }
 
     return bm;
 }
@@ -130,7 +133,6 @@ BITMAP StretchBlt(PBITMAP pbm, float scale) {
                         + U1 * V * pc
                         + U * V * pd;
             xi[ri][ci] = (val + (1 << (CAST_BITS - 1))) >> CAST_BITS;
-            // xi[ri][ri] = 255;
         }
     }
     return ximg;
@@ -243,8 +245,9 @@ void bmSave(const PBITMAP pbm, const char* filename) {
     fwrite(pbm->bmi.bmiColors, sizergbquad, 1, pImg);
     // Write color-index array.
     // Calculate the size of color-index array.
+    LONG storageWidth = ((pbm->bmi.bmiHeader.biWidth * 8 + 31) & ~31) / 8;
     size_t sizepix = sizeof(BYTE) * pbm->bmi.bmiHeader.biHeight
-                     * pbm->bmi.bmiHeader.biWidth;
+                     * storageWidth;
     // Start writing
     fwrite(pbm->bmcia[pbm->bmi.bmiHeader.biHeight - 1],
            sizepix, 1, pImg);
