@@ -1,4 +1,13 @@
-/* custommath.h - Common mathematical functions */
+/**
+ * @file custommath.h
+ * @author Atlanswer (you@domain.com)
+ * @brief Common mathematical functions
+ * @version 0.1
+ * @date 2020-11-19
+ * 
+ * @copyright Copyright (c) 2020
+ * 
+ */
 
 #ifndef _CUSTOM_MATH_
 #define _CUSTOM_MATH_

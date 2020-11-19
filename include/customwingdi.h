@@ -140,9 +140,9 @@ BITMAP StretchBlt(PBITMAP, float);
 // Custom healper functions:
 // Read a bitmap.
 BITMAP bmRead(const char* filename);
-// Destory a bitmap
+// Destory a bitmap, release the memory previously allocated.
 void bmDel(const PBITMAP pbm);
-// Save a bitmap
+// Save a bitmap.
 void bmSave(const PBITMAP pbm, const char* filename);
 
 #endif /* _CUSTOM_WINGDI_ */

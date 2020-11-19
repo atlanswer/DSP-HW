@@ -3,28 +3,26 @@
 #include <stdlib.h>
 // Custom headers
 #include "customwingdi.h"
-// Constant
-// const char MIMGNAME[] = "redbrick.bmp";
-const char OIMGNAME[] = "lena128.bmp";
-// const char SIMGNAME[] = "6x6_24bit.bmp";
+// Image filename constant
+const char OIMGNAME[] = "lena512.bmp";
 
 int main(void) {
     // Read the original image.
     BITMAP oimg = bmRead(OIMGNAME);
-    printf("Read image completed.\n");
+    printf("[main] Read image completed.\n");
 
-    // Process
-    BITMAP ximg = StretchBlt(&oimg, 2);
-    // BITMAP ximg = CreateBitmap(25, 25, &oimg);
+    // Process images.
+    BITMAP ximg = StretchBlt(&oimg, 1.5);
+    printf("[main] Image interpolation completed.\n");
 
     // Save the image.
     bmSave(&ximg, "ximg.bmp");
-    printf("The image was saved.\n");
+    printf("[main] The image was saved.\n");
 
-    // Release Image
+    // Destory the image.
     bmDel(&oimg);
-    // bmDel(&ximg);
-    printf("Program exited.");
+    bmDel(&ximg);
 
+    printf("Program exited.");
 	return EXIT_SUCCESS;
 }

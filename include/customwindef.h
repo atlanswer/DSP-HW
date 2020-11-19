@@ -1,6 +1,4 @@
-/*
- * customminwindef.h - Basic Windows Type Definitions.
- */
+/* customminwindef.h - Basic Windows Type Definitions. */
 
 #ifndef _CUSTOM_WINDEF_
 #define _CUSTOM_WINDEF_
