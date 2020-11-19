@@ -5,7 +5,7 @@
 #include "customwingdi.h"
 // Constant
 // const char MIMGNAME[] = "redbrick.bmp";
-const char OIMGNAME[] = "lena512.bmp";
+const char OIMGNAME[] = "lena128.bmp";
 // const char SIMGNAME[] = "6x6_24bit.bmp";
 
 int main(void) {
@@ -14,8 +14,8 @@ int main(void) {
     printf("Read image completed.\n");
 
     // Process
-    // BITMAP ximg = StretchBlt(&oimg, 0.2);
-    BITMAP ximg = CreateBitmap(25, 25, &oimg);
+    BITMAP ximg = StretchBlt(&oimg, 2);
+    // BITMAP ximg = CreateBitmap(25, 25, &oimg);
 
     // Save the image.
     bmSave(&ximg, "ximg.bmp");

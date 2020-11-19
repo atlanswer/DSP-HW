@@ -56,12 +56,6 @@ BITMAP CreateBitmap(int nWidth, int nHeight,
     // Calculate the file size.
     bm.bmfh.bfSize = bm.bmi.bmiHeader.biSizeImage
                      + bm.bmfh.bfOffBits;
-    
-    int i = 0;
-    int j = 0;
-    for (i = 0; i < 25; ++i) {
-        bm.bmcia[i][i] = 50 + i * 5;
-    }
 
     return bm;
 }
@@ -99,9 +93,9 @@ BITMAP StretchBlt(PBITMAP pbm, float scale) {
             r = oH - 1;
             u = 0;
         }
-        u = u * INTER_RESIZE_COEF_SCALE;
-        INT U = rint(u);
-        INT U1 = rint(INTER_RESIZE_COEF_SCALE - u);
+        // u = u * INTER_RESIZE_COEF_SCALE;
+        // INT U = rint(u);
+        // INT U1 = rint(INTER_RESIZE_COEF_SCALE - u);
         // Calculate the row index to its down.
         LONG r_ = min(r + 1, oH - 1);
         printf("Processing row = %d\n", ri);
@@ -118,9 +112,9 @@ BITMAP StretchBlt(PBITMAP pbm, float scale) {
                 c = oW - 1;
                 v = 0;
             }
-            v = v * INTER_RESIZE_COEF_SCALE;
-            INT V = rint(v);
-            INT V1 = rint(INTER_RESIZE_COEF_SCALE - v);
+            // v = v * INTER_RESIZE_COEF_SCALE;
+            // INT V = rint(v);
+            // INT V1 = rint(INTER_RESIZE_COEF_SCALE - v);
             LONG c_ = min(c + 1, oW - 1);
             // Pixel values of the nearest four pixels
             BYTE pa = oi[r][c];
@@ -128,11 +122,16 @@ BITMAP StretchBlt(PBITMAP pbm, float scale) {
             BYTE pc = oi[r_][c];
             BYTE pd = oi[r_][c_];
             // Bilinear interpolation
-            DWORD val = U1 * V1 * pa
-                        + U * V1 * pb
-                        + U1 * V * pc
-                        + U * V * pd;
-            xi[ri][ci] = (val + (1 << (CAST_BITS - 1))) >> CAST_BITS;
+            // DWORD val = U1 * V1 * pa
+            //             + U * V1 * pb
+            //             + U1 * V * pc
+            //             + U * V * pd;
+            float val2 = pa * (1 - u) * (1 - v)
+                         + pb * (1 - u) * v
+                         + pc * u * (1 - v)
+                         + pd * u * v;
+            // xi[ri][ci] = (val + (1 << (CAST_BITS - 1))) >> CAST_BITS;
+            xi[ri][ci] = floor(val2 + 0.5);
         }
     }
     return ximg;
