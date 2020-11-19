@@ -1,4 +1,12 @@
+#ifndef _CUSTOM_WINGDI_
 #include "customwingdi.h"
+#endif
+
+const INT INTER_RESIZE_COEF_BITS = 11;
+// const INT INTER_RESIZE_COEF_SCALE = 1 << INTER_RESIZE_COEF_BITS;
+const INT INTER_RESIZE_COEF_SCALE = 1 << 11;
+// const INT CAST_BITS = INTER_RESIZE_COEF_BITS << 1;
+const INT CAST_BITS = 11 << 1;
 
 /* Create an empty bitmap,
  * The number of planes must be set to 1,
@@ -58,17 +66,66 @@ BITMAP StretchBlt(PBITMAP pbm, float scale) {
     // Shortcut to the color-index array.
     BYTE** oi = pbm->bmcia;
     BYTE** xi = ximg.bmcia;
-    // Bilinear interpolation.
-
-    LONG ridx = 0;
-    LONG cidx = 0;
-    for (ridx = 0; ridx < nH; ++ridx) {
-        float oridx = ((float) ridx + 0.5) / scale - 0.5;
-        for (cidx = 0; cidx < nW; ++ cidx) {
-            float ocidx = ((float) cidx + 0.5) / scale - 0.5;
+    // Interpolation process.
+    // Inspired by OpenCL resize:
+    // https://github.com/opencv/opencv/blob/master/modules/imgproc/src/opencl/resize.cl
+    // Iterators for rows and cols in the new image.
+    LONG ri = 0;
+    LONG ci = 0;
+    printf("Processing image...\n");
+    for (ri = 0; ri < nH; ++ri) {
+        // Convert a new pixel location to the original one.
+        float sr = ((float) ri + 0.5) / scale - 0.5;
+        // Row index to its up.
+        LONG r = floor(sr);
+        // Relative to the row index
+        float u = sr - r;
+        // Edge handling
+        if (r < 0) {
+            r = 0;
+            u = 0;
+        }
+        if (r >= oH) {
+            r = oH - 1;
+            u = 0;
+        }
+        u = u * INTER_RESIZE_COEF_SCALE;
+        INT U = rint(u);
+        INT U1 = rint(INTER_RESIZE_COEF_SCALE - u);
+        // Calculate the row index to its down.
+        LONG r_ = min(r + 1, oH - 1);
+        printf("Processing row = %d\n", ri);
+        for (ci = 0; ci < nW; ++ci) {
+            // Process columns in a similar way
+            float sc = ((float) ci + 0.5) / scale - 0.5;
+            LONG c = floor(sc);
+            float v = sc - c;
+            if (c < 0) {
+                c = 0;
+                v = 0;
+            }
+            if (c >= oW) {
+                c = oW - 1;
+                v = 0;
+            }
+            v = v * INTER_RESIZE_COEF_SCALE;
+            INT V = rint(v);
+            INT V1 = rint(INTER_RESIZE_COEF_SCALE - v);
+            LONG c_ = min(c + 1, oW - 1);
+            // Pixel values of the nearest four pixels
+            BYTE pa = oi[r][c];
+            BYTE pb = oi[r][c_];
+            BYTE pc = oi[r_][c];
+            BYTE pd = oi[r_][c_];
+            // Bilinear interpolation
+            DWORD val = U1 * V1 * pa
+                       + U * V1 * pb
+                       + U1 * V * pc
+                       + U * V * pd;
+            xi[ri][ci] = (val + (1 << (CAST_BITS - 1))) >> CAST_BITS;
+            // xi[ri][ri] = 255;
         }
     }
-
     return ximg;
 }
 
@@ -138,8 +195,8 @@ BITMAP bmRead(const char* filename) {
           sizepix, 1, pImg);
     // Check end of file.
     // I don't know why there were two bytes left at the end of the file.
-    fseek(pImg, 2, SEEK_CUR);
-    assert(fgetc(pImg) == EOF);
+    // fseek(pImg, 2, SEEK_CUR);
+    // assert(fgetc(pImg) == EOF);
     // Close file
     fclose(pImg);
     return bm;

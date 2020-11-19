@@ -19,19 +19,22 @@
 /*
  * Windows data types
  * - BYTE       A bytes (8 bits)
- *              typedef unsigned char BYTE;
+ *                  typedef unsigned char BYTE;
  * - WORD       A 16-bit unsigned integer.
- *              typedef unsigned short WORD;
+ *                  typedef unsigned short WORD;
  * - DWORD      A 32-bit unsigned integer.
- *              typedef unsigned long DWORD;
+ *                  typedef unsigned long DWORD;
  * - LONG       A 32-bit signed integer.
- *              typedef long LONG;
+ *                  typedef long LONG;
  * - INT        A 32-bit signed integer.
  *              The range is -2147483648
  *              through 2147483647 decimal.
+ *                  typedef int INT;
  * - UINT       An unsigned INT.
  *              The range is 0 through 4294967295 decimal.
+ *                  typedef unsigned int UINT;
  * - VOID       Any type.
+ *                  #define VOID void
  * - LPVOID     A pointer to any type.
  * - BOOL       A Boolean variable (should be TRUE or FALSE).
  */
@@ -40,9 +43,9 @@ typedef unsigned char BYTE;
 typedef unsigned short WORD;
 typedef unsigned int DWORD;
 typedef int LONG;
+typedef int INT;
 typedef unsigned int UINT;
 #define VOID void
-typedef void *LPVOID;
 typedef int BOOL;
 
-#endif
+#endif /* _CUSTOM_WINDEF_ */

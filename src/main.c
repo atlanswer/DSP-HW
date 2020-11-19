@@ -22,7 +22,7 @@ int main(void) {
 
     // Release Image
     bmDel(&oimg);
-    bmDel(&ximg);
+    // bmDel(&ximg);
     printf("Program exited.");
 
 	return EXIT_SUCCESS;

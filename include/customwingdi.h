@@ -7,7 +7,12 @@
 #include <assert.h>
 #include <math.h>
 // Custom headers
+#ifndef _CUSTOM_WINDEF_
 #include "customwindef.h"
+#endif
+#ifndef _CUSTOM_MATH_
+#include "custommath.h"
+#endif
 
 #ifndef _CUSTOM_WINGDI_
 #define _CUSTOM_WINGDI_
@@ -18,6 +23,11 @@
  * https://en.cppreference.com/w/c/preprocessor/impl
  */ 
 #pragma pack(push, 1)
+
+// https://github.com/opencv/opencv/blob/master/modules/imgproc/src/resize.cpp#L905
+extern const INT INTER_RESIZE_COEF_BITS;
+extern const INT INTER_RESIZE_COEF_SCALE;
+extern const INT CAST_BITS;
 
 /* The BITMAPFILEHEADER structure contains information
  * about the type, size, and layout of a file that
@@ -116,32 +126,7 @@ typedef struct tagBITMAP {
  */
 BITMAP CreateBitmap(int nWidth, int nHeight,
                     const PBITMAP pbmo);
-/* The GetDIBColorTable function retrieves RGB
- * (red, green, blue) color values from a range
- * of entries in the color table of the DIB section
- * bitmap that is currently selected into a specified
- * device context.
- * https://docs.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-getdibcolortable
- * MODIFIED
- */
-UINT GetDIBColorTable(UINT iStart, UINT cEntries,
-                      PRGBQUAD prgbq);
-/* The GetDIBits function retrieves the bits of the
- * specified compatible bitmap and copies them into
- * a buffer as a DIB using the specified format.
- * https://docs.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-getdibits
- * MODIFIED
- */
-int GetBIBits(PBITMAP pbm, UINT start, UINT cLines,
-              LPVOID pvBits, PBITMAPINFO pbmi);
-/* The SetDIBits function sets the pixels in a
- * compatible bitmap (DDB) using the color data
- * found in the specified DIB.
- * https://docs.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-setdibits
- * MODIFIED
- */
-int SetDIBits(PBITMAP pbm, UINT start, UINT cLines,
-              const VOID* pBits, const PBITMAPINFO pbmi);
+
 /* The StretchBlt function copies a bitmap from a
  * source rectangle into a destination rectangle,
  * stretching or compressing the bitmap to fit
@@ -160,4 +145,4 @@ void bmDel(const PBITMAP pbm);
 // Save a bitmap
 void bmSave(const PBITMAP pbm, const char* filename);
 
-#endif
+#endif /* _CUSTOM_WINGDI_ */
