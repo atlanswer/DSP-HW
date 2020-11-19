@@ -14,7 +14,8 @@ int main(void) {
     printf("Read image completed.\n");
 
     // Process
-    BITMAP ximg = StretchBlt(&oimg, 0.1);
+    // BITMAP ximg = StretchBlt(&oimg, 2);
+    BITMAP ximg = CreateBitmap(25, 25, &oimg);
 
     // Save the image.
     bmSave(&ximg, "ximg.bmp");

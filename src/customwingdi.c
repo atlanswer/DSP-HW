@@ -46,13 +46,20 @@ BITMAP CreateBitmap(int nWidth, int nHeight,
     // Set the pointers to the correct positions
     size_t row = bm.bmi.bmiHeader.biHeight - 1;
     bm.bmcia[row] = (BYTE*) (bm.bmcia + bm.bmi.bmiHeader.biHeight);
-    for (; row != SIZE_MAX;) {
+    for (; row != 0;) {
         bm.bmcia[row] = bm.bmcia[row--]
                         + bm.bmi.bmiHeader.biWidth;
     }
     // Calculate the file size.
     bm.bmfh.bfSize = bm.bmi.bmiHeader.biSizeImage
                      + bm.bmfh.bfOffBits;
+    
+    // int i = 0;
+    // int j = 0;
+    // for (i = 0; i < 25; ++i) {
+    //     bm.bmcia[23][i] = 50 + i * 5;
+    // }
+
     return bm;
 }
 
@@ -119,9 +126,9 @@ BITMAP StretchBlt(PBITMAP pbm, float scale) {
             BYTE pd = oi[r_][c_];
             // Bilinear interpolation
             DWORD val = U1 * V1 * pa
-                       + U * V1 * pb
-                       + U1 * V * pc
-                       + U * V * pd;
+                        + U * V1 * pb
+                        + U1 * V * pc
+                        + U * V * pd;
             xi[ri][ci] = (val + (1 << (CAST_BITS - 1))) >> CAST_BITS;
             // xi[ri][ri] = 255;
         }
@@ -186,7 +193,7 @@ BITMAP bmRead(const char* filename) {
     // Set the pointers to the correct positions
     size_t row = bm.bmi.bmiHeader.biHeight - 1;
     bm.bmcia[row] = (BYTE*) (bm.bmcia + bm.bmi.bmiHeader.biHeight);
-    for (; row != SIZE_MAX;) {
+    for (; row != 0;) {
         bm.bmcia[row] = bm.bmcia[row--]
                         + bm.bmi.bmiHeader.biWidth;
     }
