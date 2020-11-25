@@ -17,15 +17,15 @@
 #include <assert.h>
 #include <math.h>
 // Custom headers
-#ifndef _CUSTOM_WINDEF_
+#ifndef _CUSTOM_WINDEF_H_
 #include "customwindef.h"
-#endif
-#ifndef _CUSTOM_MATH_
+#endif /* _CUSTOM_WINDEF_H_ */
+#ifndef _CUSTOM_MATH_H_
 #include "custommath.h"
-#endif
+#endif /* _CUSTOM_MATH_H_ */
 
-#ifndef _CUSTOM_WINGDI_
-#define _CUSTOM_WINGDI_
+#ifndef _CUSTOM_WINGDI_H_
+#define _CUSTOM_WINGDI_H_
 
 /**
  * @brief Structure-Layout Pragma
@@ -186,7 +186,7 @@ BITMAP CreateBitmap(int nWidth, int nHeight,
  * @see https://docs.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-stretchblt
  * @warning This function has nothing to do with the wingdi.h version.
  */
-BITMAP StretchBlt(PBITMAP pbm, float scale);
+BITMAP StretchBlt(const PBITMAP pbm, float scale);
 
 // Custom healper functions:
 
@@ -215,4 +215,4 @@ void bmDel(const PBITMAP pbm);
  */
 void bmSave(const PBITMAP pbm, const char* filename);
 
-#endif /* _CUSTOM_WINGDI_ */
+#endif /* _CUSTOM_WINGDI_H_ */

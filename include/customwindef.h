@@ -10,18 +10,26 @@
  * 
  */
 
-#ifndef _CUSTOM_WINDEF_
-#define _CUSTOM_WINDEF_
+#ifndef _CUSTOM_WINDEF_H_
+#define _CUSTOM_WINDEF_H_
 
 /*
- * The C6000 compiler defines a size for each data type:
- * - char      : 8 bits
- * - short     : 16 bits
- * - int       : 32 bits
- * - float     : 32 bits
- * - long      : 40 bits
- * - long long : 64 bits
- * - double    : 64 bits
+ * TMS320C6000 C/C++ EABI ABI data types:
+ * | Type           | Size
+ * - char           : 8 bits
+ * - short          : 16 bits
+ * - int            : 32 bits
+ * - long           : 32 bits
+ * - __int40_t      : 40 bits
+ * - long long      : 64 bits
+ * - enum           : 32 bits
+ * - float          : 32 bits
+ * - double         : 64 bits
+ * - long double    : 64 bits
+ * - pointers,
+ *   references,
+ *   pointer to
+ *   data members   : 32 bits
  */
 
 /*
@@ -56,4 +64,4 @@ typedef unsigned int UINT;
 #define VOID void
 typedef int BOOL;
 
-#endif /* _CUSTOM_WINDEF_ */
+#endif /* _CUSTOM_WINDEF_H_ */

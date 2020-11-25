@@ -9,9 +9,9 @@
  * 
  */
 
-#ifndef _CUSTOM_WINGDI_
+#ifndef _CUSTOM_WINGDI_H_
 #include "customwingdi.h"
-#endif
+#endif /* _CUSTOM_WINGDI_H_ */
 
 const INT INTER_RESIZE_COEF_BITS = 11;
 /// const INT INTER_RESIZE_COEF_SCALE = 1 << INTER_RESIZE_COEF_BITS;
@@ -67,7 +67,7 @@ BITMAP CreateBitmap(int nWidth, int nHeight,
     return bm;
 }
 
-BITMAP StretchBlt(PBITMAP pbm, float scale) {
+BITMAP StretchBlt(const PBITMAP pbm, float scale) {
     LONG oW = pbm->bmi.bmiHeader.biWidth;
     LONG oH = pbm->bmi.bmiHeader.biHeight;
     LONG nW = ceil(oW * scale);

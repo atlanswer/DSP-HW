@@ -9,9 +9,9 @@
  * 
  */
 
-#ifndef _CUSTOM_MATH_
+#ifndef _CUSTOM_MATH_H_
 #include "custommath.h"
-#endif
+#endif /* _CUSTOM_MATH_H_ */
 
 int min(int x, int y) {
     return (x > y) ? y : x;

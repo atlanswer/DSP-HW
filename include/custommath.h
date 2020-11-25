@@ -10,8 +10,8 @@
  * 
  */
 
-#ifndef _CUSTOM_MATH_
-#define _CUSTOM_MATH_
+#ifndef _CUSTOM_MATH_H_
+#define _CUSTOM_MATH_H_
 
 /**
  * @brief Macro function, determine if odd or not.
@@ -36,4 +36,4 @@ int min(int x, int y);
  */
 int rint(float arg);
 
-#endif /* _CUSTOM_MATH_ */
+#endif /* _CUSTOM_MATH_H_ */
