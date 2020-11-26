@@ -20,9 +20,9 @@
 #ifndef _CUSTOM_WINDEF_H_
 #include "customwindef.h"
 #endif /* _CUSTOM_WINDEF_H_ */
-#ifndef _CUSTOM_MATH_H_
-#include "custommath.h"
-#endif /* _CUSTOM_MATH_H_ */
+#ifndef _IMGPROC_H_
+#include "imgproc.h"
+#endif /* _IMGPROC_H_ */
 
 #ifndef _CUSTOM_WINGDI_H_
 #define _CUSTOM_WINGDI_H_
@@ -35,15 +35,6 @@
  * 
  */
 #pragma pack(push, 1)
-
-/**
- * @brief WIP
- * @see https://github.com/opencv/opencv/blob/master/modules/imgproc/src/resize.cpp#L905
- * 
- */
-extern const INT INTER_RESIZE_COEF_BITS;
-extern const INT INTER_RESIZE_COEF_SCALE;
-extern const INT CAST_BITS;
 
 /**
  * Information about the type, size,

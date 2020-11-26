@@ -16,6 +16,7 @@
 #include "customwingdi.h"
 // Image filename constant
 const char OIMGNAME[] = "lena512.bmp";
+const char XIMGNAME[] = "ximg.bmp";
 
 int main(void) {
     /// Read the original image.
@@ -27,7 +28,7 @@ int main(void) {
     printf("[main] Image interpolation completed.\n");
 
     /// Save the image.
-    bmSave(&ximg, "ximg.bmp");
+    bmSave(&ximg, XIMGNAME);
     printf("[main] The image was saved.\n");
 
     /// Destory the image.
