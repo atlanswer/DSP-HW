@@ -1,0 +1,9 @@
+# CCS Project Files
+.launches/
+.settings/
+
+# Debug
+Debug/
+
+# Release
+Release/
