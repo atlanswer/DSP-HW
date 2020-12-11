@@ -28,7 +28,11 @@
  * The double-parentheses are crucial.
  * 
  */
-#define dprintf(x) do { if (DEBUG) debugPrintf x; } while (0)
+#ifndef DEBUG
+#define dprintf(x) debugPrintf x;
+#else
+#define dprintf(x) do { if (0) debugPrintf x; } while (0)
+#endif
 
 /**
  * @brief WIP, C optimization.

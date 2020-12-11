@@ -69,6 +69,7 @@ Note: `Texas Instruments Simulators` connection is required to run the CPU cycle
         - Debug Options: Full symbolic debug `-g`
         - Advanced Options
             - Predefined Symbols: `--define=DEBUG`
+            - Assembler Options: `--keep_asm`
 
 ##### Release Configuration
 
