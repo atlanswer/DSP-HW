@@ -71,7 +71,7 @@ BITMAP StretchBlt(const PBITMAP pbm, const float scale) {
     clock_t start_t = clock();
     resize(pbm->bmcia, ximg.bmcia, oW, oH, nW, nH, scale);
     clock_t elapse_t = clock() - start_t;
-    printf("Interpolation took: %d cycles.\n", elapse_t);
+    printf("[StretchBlt] Interpolation took: %d cycles.\n", elapse_t);
     return ximg;
 }
 

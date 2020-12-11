@@ -44,7 +44,7 @@ void resize(BYTE** const src, BYTE** const dst,
     LONG ri, ci;
     // Iterate over rows.
     for (ri = 0; ri < nH; ++ri) {
-        dprintf(("\rProcessing row index: %d\n", ri));
+        dprintf(("\r[resize] Processing row index: %d\n", ri));
         // Convert pixel index to a location in the original image.
         float sr = (ri + 0.5f) / scale - 0.5f;
         // Round towards the origin.

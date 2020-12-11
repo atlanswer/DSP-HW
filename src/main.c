@@ -38,6 +38,6 @@ int main(void) {
     bmDel(&oimg);
     bmDel(&ximg);
 
-    printf("Program exited.\n");
+    printf("[main] Program exited.\n");
 	return EXIT_SUCCESS;
 }
