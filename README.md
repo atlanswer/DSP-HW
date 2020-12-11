@@ -4,7 +4,7 @@
 Homework for _Principles and Applications of DSP Devices_, SYSU SEIT, Fall 2020.
 
 **2x bilinear interpolation Demo:**
-![Demo](demo.jpg)
+![Demo](res/demo.jpg)
 
 ### Useful resources
 

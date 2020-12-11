@@ -28,7 +28,7 @@
  * The double-parentheses are crucial.
  * 
  */
-#ifndef DEBUG
+#ifdef DEBUG
 #define dprintf(x) debugPrintf x;
 #else
 #define dprintf(x) do { if (0) debugPrintf x; } while (0)

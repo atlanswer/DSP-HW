@@ -14,16 +14,16 @@
 #include <stdlib.h>
 // Custom headers
 #include "customwingdi.h"
-// Image filename constant
-const char OIMGNAME[] = "lena512.bmp";
-const char XIMGNAME[] = "ximg.bmp";
+// Image filepath constant
+const char OIMGPATH[] = "../res/lena512.bmp";
+const char XIMGPATH[] = "../res/output.bmp";
 
 int main(void) {
     /// Start CPU cycle counter.
     TSCL = 1;
 
     /// Read the original image.
-    BITMAP oimg = bmRead(OIMGNAME);
+    BITMAP oimg = bmRead(OIMGPATH);
     printf("[main] Read image completed.\n");
 
     /// Process images.
@@ -31,7 +31,7 @@ int main(void) {
     printf("[main] Image interpolation completed.\n");
 
     /// Save the image.
-    bmSave(&ximg, XIMGNAME);
+    bmSave(&ximg, XIMGPATH);
     printf("[main] The image was saved.\n");
 
     /// Destory the image.
