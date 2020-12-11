@@ -177,7 +177,7 @@ BITMAP CreateBitmap(int nWidth, int nHeight,
  * @see https://docs.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-stretchblt
  * @warning This function has nothing to do with the wingdi.h version.
  */
-BITMAP StretchBlt(const PBITMAP pbm, float scale);
+BITMAP StretchBlt(const PBITMAP pbm, const float scale);
 
 // Custom healper functions:
 

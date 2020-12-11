@@ -19,7 +19,7 @@ const INT INTER_RESIZE_COEF_SCALE = 1 << 11;
 /// const INT CAST_BITS = INTER_RESIZE_COEF_BITS << 1;
 const INT CAST_BITS = 11 << 1;
 
-void resize(const BYTE** const src, BYTE** const dst,
+void resize(BYTE** const src, BYTE** const dst,
             const LONG oW, const LONG oH,
             const LONG nW, const LONG nH,
             const float scale) {

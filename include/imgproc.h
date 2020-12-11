@@ -47,7 +47,7 @@ extern const INT CAST_BITS;
  * @see https://github.com/opencv/opencv/blob/master/modules/imgproc/src/opencl/resize.cl
  *
  */
-void resize(const BYTE** const src, BYTE** const dst,
+void resize(BYTE** const src, BYTE** const dst,
             const LONG oW, const LONG oH,
             const LONG nW, const LONG nH,
             const float scale);

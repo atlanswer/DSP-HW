@@ -61,7 +61,7 @@ BITMAP CreateBitmap(int nWidth, int nHeight,
     return bm;
 }
 
-BITMAP StretchBlt(const PBITMAP pbm, float scale) {
+BITMAP StretchBlt(const PBITMAP pbm, const float scale) {
     LONG oW = pbm->bmi.bmiHeader.biWidth;
     LONG oH = pbm->bmi.bmiHeader.biHeight;
     LONG nW = ceil(oW * scale);
