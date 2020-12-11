@@ -73,7 +73,14 @@ Note: `Texas Instruments Simulators` connection is required to run the CPU cycle
 
 ##### Release Configuration
 
-**TBD**
+- Build
+    - C6000 Compiler
+        - Optimization: `-O2`
+        - Debug Options: Symbolic debug for program analysis `--symdebug:skeletal`
+        - Advanced Options
+            - Predefined Symbols: `--define=RELEASE`
+
+Other options are assumed to be default.
 
 #### How to run
 
