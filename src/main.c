@@ -2,8 +2,8 @@
  * @file main.c
  * @author Atlanswer (atlanswer@gmail.com)
  * @brief Main logic.
- * @version 0.1
- * @date 2020-11-19
+ * @version 0.2
+ * @date 2020-12-11
  * 
  * @copyright Copyright (c) 2020
  * 
@@ -19,6 +19,9 @@ const char OIMGNAME[] = "lena512.bmp";
 const char XIMGNAME[] = "ximg.bmp";
 
 int main(void) {
+    /// Start CPU cycle counter.
+    TSCL = 1;
+
     /// Read the original image.
     BITMAP oimg = bmRead(OIMGNAME);
     printf("[main] Read image completed.\n");
@@ -35,6 +38,6 @@ int main(void) {
     bmDel(&oimg);
     bmDel(&ximg);
 
-    printf("Program exited.");
+    printf("Program exited.\n");
 	return EXIT_SUCCESS;
 }

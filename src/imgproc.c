@@ -2,12 +2,15 @@
  * @file imgproc.c
  * @author Atlanswer (atlanswer@gmail.com)
  * @brief Image processing algorithm implementations.
- * @version 0.1
- * @date 2020-11-25
+ * @version 0.2
+ * @date 2020-12-11
  * 
  * @copyright Copyright (c) 2020
  * 
  */
+
+#include <stdio.h>
+#include <stdarg.h>
 
 #ifndef _IMGPROC_H_
 #include "imgproc.h"
@@ -19,6 +22,20 @@ const INT INTER_RESIZE_COEF_SCALE = 1 << 11;
 /// const INT CAST_BITS = INTER_RESIZE_COEF_BITS << 1;
 const INT CAST_BITS = 11 << 1;
 
+void debugPrintf(const char *fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    vfprintf(stderr, fmt, args);
+    va_end(args);
+}
+
+clock_t clock() {
+    unsigned int low = TSCL;
+    unsigned int high = TSCH;
+    if (high) return (clock_t) -1;
+    return low;
+}
+
 void resize(BYTE** const src, BYTE** const dst,
             const LONG oW, const LONG oH,
             const LONG nW, const LONG nH,
@@ -27,6 +44,7 @@ void resize(BYTE** const src, BYTE** const dst,
     LONG ri, ci;
     // Iterate over rows.
     for (ri = 0; ri < nH; ++ri) {
+        dprintf(("\rProcessing row index: %d\n", ri));
         // Convert pixel index to a location in the original image.
         float sr = (ri + 0.5f) / scale - 0.5f;
         // Round towards the origin.

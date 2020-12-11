@@ -2,8 +2,8 @@
  * @file customwingdi.h
  * @author Atlanswer (atlanswer@gmail.com)
  * @brief Bitmap Header Definition.
- * @version 0.1
- * @date 2020-11-19
+ * @version 0.2
+ * @date 2020-12-11
  * 
  * @copyright Copyright (c) 2020
  * @see https://docs.microsoft.com/en-us/windows/win32/gdi/bitmaps
@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <math.h>
+#include <time.h>
 // Custom headers
 #ifndef _CUSTOM_WINDEF_H_
 #include "customwindef.h"

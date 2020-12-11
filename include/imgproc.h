@@ -2,14 +2,15 @@
  * @file imgproc.h
  * @author Atlanswer (atlanswer@gmail.com)
  * @brief Image processing algorithms.
- * @version 0.1
- * @date 2020-11-25
+ * @version 0.2
+ * @date 2020-12-11
  * 
  * @copyright Copyright (c) 2020
  * 
  */
 
 #include <math.h>
+#include <time.h>
 
 #ifndef _CUSTOM_WINDEF_H_
 #include "customwindef.h"
@@ -22,13 +23,35 @@
 #define _IMGPROC_H_
 
 /**
- * @brief WIP
+ * @brief DEBUG only printf function.
+ * Usage: dprintf(("message %d", var))
+ * The double-parentheses are crucial.
+ * 
+ */
+#define dprintf(x) do { if (DEBUG) debugPrintf x; } while (0)
+
+/**
+ * @brief WIP, C optimization.
  * @see https://github.com/opencv/opencv/blob/master/modules/imgproc/src/resize.cpp#L905
  * 
  */
 extern const INT INTER_RESIZE_COEF_BITS;
 extern const INT INTER_RESIZE_COEF_SCALE;
 extern const INT CAST_BITS;
+
+/**
+ * @brief CPU time stamp counter control register. 
+ * 
+ */
+extern cregister volatile unsigned int TSCL;
+extern cregister volatile unsigned int TSCH;
+
+/**
+ * @brief Get the current CPU cycle stamp.
+ * 
+ * @return clock_t: unsigned int
+ */
+clock_t clock(void);
 
 /**
  * @brief Resize an image using bilinear interpolation.

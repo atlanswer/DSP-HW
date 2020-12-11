@@ -2,8 +2,8 @@
  * @file customwingdi.c
  * @author Atlanswer (atlanswer@gmail.com)
  * @brief Custom bitmap processing functions.
- * @version 0.1
- * @date 2020-11-19
+ * @version 0.2
+ * @date 2020-12-11
  * 
  * @copyright Copyright (c) 2020
  * 
@@ -68,7 +68,10 @@ BITMAP StretchBlt(const PBITMAP pbm, const float scale) {
     LONG nH = ceil(oH * scale);
     BITMAP ximg = CreateBitmap(nW, nH, pbm);
     // Interpolation process.
+    clock_t start_t = clock();
     resize(pbm->bmcia, ximg.bmcia, oW, oH, nW, nH, scale);
+    clock_t elapse_t = clock() - start_t;
+    printf("Interpolation took: %d cycles.\n", elapse_t);
     return ximg;
 }
 
