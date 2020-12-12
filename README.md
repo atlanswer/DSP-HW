@@ -6,6 +6,8 @@ Homework for _Principles and Applications of DSP Devices_, SYSU SEIT, Fall 2020.
 **2x bilinear interpolation Demo:**
 ![Demo](res/demo.jpg)
 
+**欢迎在 [Discussions](https://github.com/atlanswer/DSP-HW/discussions) 讨论，利用 [Issues](https://github.com/atlanswer/DSP-HW/issues) 跟踪代码问题， 以及提交 [PR](https://github.com/atlanswer/DSP-HW/pulls) 分享你的代码。**
+
 ### Useful resources
 
 Documents:
@@ -17,6 +19,7 @@ Documents:
 - [TMS320C6000 Programmer's Guide](https://www.ti.com/lit/ug/spru198k)
 - [TI-RTOS Kernel (SYS/BIOS) User's Guide](https://www.ti.com/lit/pdf/spruex3)
 - [Introduction to TMS320C6000 DSP Optimization](https://www.ti.com/lit/an/sprabf2/sprabf2.pdf)
+- [TMS320C6000 Integer Division](https://www.ti.com/lit/an/spra707/spra707.pdf)
 - [Performance Tuning with the “Restrict” Keyword](https://processors.wiki.ti.com/images/f/ff/Bartley=Wiki_1.1=Performance_Tuning_with_the_RESTRICT_Keyword.pdf)
 
 Websites:
