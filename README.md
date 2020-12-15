@@ -62,7 +62,7 @@ Note: `Texas Instruments Simulators` connection is required to run the CPU cycle
     - C6000 Linker
         - Heap size for C/C++ dynamic memory allocation: `--heap_size=0x200000`
 
-    The program uses `malloc` to dynamically allocate memory for the images. The `.sysmem` section of memory should be adjust to accommodate every images since the default size of 1KB is clearly not enough. More info about the cmd file could be found at [here](https://software-dl.ti.com/ccs/esd/documents/sdto_cgt_Linker-Command-File-Primer.html).
+    The program uses `malloc` to dynamically allocate memory for the images. The `.sysmem` section of memory should be adjust to accommodate every images since the default size of 1KB is clearly not enough. More info about the cmd file could be found [here](https://software-dl.ti.com/ccs/esd/documents/sdto_cgt_Linker-Command-File-Primer.html).
 
 ##### Debug Configuration 
 
@@ -82,6 +82,7 @@ Note: `Texas Instruments Simulators` connection is required to run the CPU cycle
         - Debug Options: Symbolic debug for program analysis `--symdebug:skeletal`
         - Advanced Options
             - Predefined Symbols: `--define=RELEASE`
+            - Runtime Model Options: Generate verbose software pipelining information `--mw`
 
 Other options are assumed to be default.
 
