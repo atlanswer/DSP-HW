@@ -1,0 +1,19 @@
+;
+; @file resize.sa
+; @author Atlanswer (atlanswer@gmail.com)
+; @brief Resize linear assembly implementation.
+; @version 0.1
+; @date 2020-12-15
+; 
+; @copyright Copyright (c) 2020
+; 
+;
+        ; Implementation switch
+        .if     $isdefed("USE_SA_IMPL")
+
+        .def    resize
+resize: .cproc  src, dst, oW, oH, nW, nH, scale
+        ; WIP
+        .endproc
+
+        .endif

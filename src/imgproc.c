@@ -36,6 +36,9 @@ clock_t clock() {
     return low;
 }
 
+// Implementation switch
+#ifndef USE_SA_IMPL
+
 void resize(BYTE** const src, BYTE** const dst,
             const LONG oW, const LONG oH,
             const LONG nW, const LONG nH,
@@ -104,3 +107,5 @@ void resize(BYTE** const src, BYTE** const dst,
         }
     }
 }
+
+#endif
