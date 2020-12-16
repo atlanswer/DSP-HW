@@ -42,14 +42,14 @@ clock_t clock() {
 void resize(BYTE** const src, BYTE** const dst,
             const LONG oW, const LONG oH,
             const LONG nW, const LONG nH,
-            const float scale) {
+            const float inv_scale) {
     /// Row and column index.
     LONG ri, ci;
     // Iterate over rows.
     for (ri = 0; ri < nH; ++ri) {
         dprintf(("\r[resize] Processing row index: %d\n", ri));
         // Convert pixel index to a location in the original image.
-        float sr = (ri + 0.5f) / scale - 0.5f;
+        float sr = (ri + 0.5f) * inv_scale - 0.5f;
         // Round towards the origin.
         LONG r = floor(sr);
         // Relative distance
@@ -72,7 +72,7 @@ void resize(BYTE** const src, BYTE** const dst,
 
         // Iterate over columns.
         for(ci = 0; ci < nW; ++ci) {
-            float sc = (ci + 0.5f) / scale - 0.5f;
+            float sc = (ci + 0.5f) * inv_scale - 0.5f;
             LONG c = floor(sc);
             float v = sc - c;
             if (c < 0) {

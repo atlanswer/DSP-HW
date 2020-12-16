@@ -77,6 +77,6 @@ clock_t clock(void);
 void resize(BYTE** const src, BYTE** const dst,
             const LONG oW, const LONG oH,
             const LONG nW, const LONG nH,
-            const float scale);
+            const float inv_scale);
 
 #endif /* _IMGPROC_H_ */

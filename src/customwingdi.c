@@ -66,10 +66,11 @@ BITMAP StretchBlt(const PBITMAP pbm, const float scale) {
     LONG oH = pbm->bmi.bmiHeader.biHeight;
     LONG nW = ceil(oW * scale);
     LONG nH = ceil(oH * scale);
+    float inv_scale = 1 / scale;
     BITMAP ximg = CreateBitmap(nW, nH, pbm);
     // Interpolation process.
     clock_t start_t = clock();
-    resize(pbm->bmcia, ximg.bmcia, oW, oH, nW, nH, scale);
+    resize(pbm->bmcia, ximg.bmcia, oW, oH, nW, nH, inv_scale);
     clock_t elapse_t = clock() - start_t;
     printf("[StretchBlt] Interpolation took: %d cycles.\n", elapse_t);
     return ximg;
