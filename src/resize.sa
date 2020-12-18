@@ -2,8 +2,8 @@
 ; @file resize.sa
 ; @author Atlanswer (atlanswer@gmail.com)
 ; @brief Resize linear assembly implementation.
-; @version 0.1.1
-; @date 2020-12-16
+; @version 0.1.2
+; @date 2020-12-18
 ; 
 ; @copyright Copyright (c) 2020
 ; 
@@ -13,6 +13,10 @@
 
         .def    resize
 resize: .cproc  src, dst, oW, oH, nW, nH, inv_scale
+        ; Set image base pointers
+        .reg            psrc, pdst
+        addaw           src, oH, psrc
+        addaw           dst, nH, pdst
         ; For loop counter
         .reg            ri, ci
         mv              nH, ri
@@ -68,12 +72,18 @@ riter:
         .reg            ircs, ircsr, u1                 ; INTER_RESIZE_COEF_SCALE
         mvk             1, ircs
         shl             ircs, nrishl, ircsr
-        sub             ircsr, u, u1
+        sub             ircsr, u, u1                    ; u1 << nrishl
         ; Get r_
         .reg            r_, isr_notoverflow
         add             r, 1, r_
         cmpltu          r_, oH, isr_notoverflow
 [!isr_notoverflow] sub  oH, 1, r_
+        ; Set row pointers
+        .reg            offsetr, pr, offsetr_, pr_
+        mpy             oW, r, offsetr
+        addaw           psrc, offsetr, pr
+        mpy             oW, r_, offsetr_
+        addaw           psrc, offsetr_, pr_
 citer:
         ; Formula: sc = (ci + 0.5) * inv_scale - 0.5
         ; Shifting ci left
@@ -108,12 +118,19 @@ citer:
         ; Get v1
         .reg            ircsc, v1
         shl             ircs, ncishl, ircsc
-        sub             ircsc, v, v1
+        sub             ircsc, v, v1                    ; v1 << ncishl
         ; Get c_
         .reg            c_, isc_notoverflow
         add             c, 1, c_
         cmpltu          c_, oW, isc_notoverflow
 [!isc_notoverflow] sub  oW, 1, c_
+
+        ; Load pixels
+        .reg            pxa, pxb, pxc, pxd
+        ldb             *+pr[c], pxa
+        ldb             *+pr[c_], pxb
+        ldb             *+pr_[c], pxc
+        ldb             *+pr_[c_], pxd
 
         .endproc        ; resize
 
