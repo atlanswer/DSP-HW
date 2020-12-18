@@ -12,25 +12,13 @@
         .if     $isdefed("USE_SA_IMPL")
 
         .def    resize
-resize: .cproc  src, dst, oW, oH, nW, nH, scale
+resize: .cproc  src, dst, oW, oH, nW, nH, inv_scale
+        ; For loop counter
+        .reg            ri, ci
+        mv              nH, ri
+        mv              nW, ci
         ; For breaking down inv_scale
         .reg            exponent, mantissa, nexpbase, oneat16
-        ; For idx
-        .reg            nidxshl, idxshl, n0_5shl, shl0_5
-        ; For dx
-        .reg			dxshl, dxshru, ndxshru, dx
-
-        ; Cast index from the new image to the original image.
-        ; Formula: dx = (idx + 0.5) * inc_scale - 0.5
-        ; idx + 0.5
-        lmbd            1, idx, nidxshl
-        sub             nidxshl, 16, nidxshl
-        shl             idx, nidxshl, idxshl
-        sub             nidxshl, 1, n0_5shl
-        mvk             1, shl0_5
-        shl             shl0_5, n0_5shl, shl0_5
-        add             idxshl, shl0_5, idxshl
-        ; * inc_scale
         ; Extract the exponent (bit 31-24).
         extu            inv_scale, 1, 24, exponent
         mvk             127, nexpbase
@@ -38,16 +26,94 @@ resize: .cproc  src, dst, oW, oH, nW, nH, scale
         ; Extract the mantissa (bit 23-0), but truncated to 15 bits.
         extu            inv_scale, 9, 17, mantissa
 		; Insert 1 to bit 16.
-		mvk               1, oneat16
-		shl               oneat16, 15, oneat16
-		or                oneat16, mantissa, mantissa
-		; Multiply
-		mpyu              idxshl, mantissa, dxshl
-		; Shift back as well as - 0.5
-        shru            dxshl, 15, dxshru
-        sub             dxshru, shl0_5, dxshru
-        sub             nidxshl, exponent, ndxshru
-        shru            dxshru, ndxshru, dx
+		mvk             1, oneat16
+		shl             oneat16, 15, oneat16
+		or              oneat16, mantissa, mantissa     ; mantissa << 15
+        ; Bring up 0.5, but shifted left by 1
+        .reg            f0_5
+        mvk             1, f0_5                         ; 0.5 << 1
+riter:
+        ; Cast index from the new image to the original image.
+        ; Formula: sr = (ri + 0.5) * inv_scale - 0.5
+        ; Shifting ri left
+        .reg            nrishl, rishl, nr0_5shl, r0_5shl
+        ; ri + 0.5
+        lmbd            1, ri, nrishl
+        sub             nrishl, 16, nrishl
+        shl             ri, nrishl, rishl               ; ri << nrishl
+        sub             nrishl, 1, nr0_5shl
+        shl             f0_5, nr0_5shl, r0_5shl         ; 0.5 << nrishl
+        add             rishl, r0_5shl, rishl
+        ; * inv_scale
+        .reg            srmpyu, srshru
+        mpyu            rishl, mantissa, srmpyu         ; sr << nrishl + 15
+        ; - 0.5
+        shru            srmpyu, 15, srshru              ; sr << nrishl
+        sub             srshru, r0_5shl, srshru
+        ; u = sr - r
+        .reg            u, nsrshl, nsrshlreg
+        add             nrishl, 16, nsrshl
+        shl             nsrshl, 5, nsrshlreg
+        add             nsrshlreg, nsrshl, nsrshlreg
+        extu            srshru, nsrshlreg, u            ; u << nrishl
+        .reg            nsrshru, r
+        sub             nrishl, exponent, nsrshru
+        shru            srshru, nsrshru, r              ; r
+        ; Edge handling
+        .reg            isrnotoverflow
+        cmpltu          r, oH, isrnotoverflow
+[!isrnotoverflow] sub   oH, 1, r
+[!isrnotoverflow] zero  u
+        ; Get u1
+        .reg            ircs, ircsr, u1                 ; INTER_RESIZE_COEF_SCALE
+        mvk             1, ircs
+        shl             ircs, nrishl, ircsr
+        sub             ircsr, u, u1
+        ; Get r_
+        .reg            r_, isr_notoverflow
+        add             r, 1, r_
+        cmpltu          r_, oH, isr_notoverflow
+[!isr_notoverflow] sub  oH, 1, r_
+citer:
+        ; Formula: sc = (ci + 0.5) * inv_scale - 0.5
+        ; Shifting ci left
+        .reg            ncishl, cishl, nc0_5shl, c0_5shl
+        ; ci + 0.5
+        lmbd            1, ci, ncishl
+        sub             ncishl, 16, ncishl
+        shl             ci, ncishl, cishl               ; ci << ncishl
+        sub             ncishl, 1, nc0_5shl
+        shl             f0_5, nc0_5shl, c0_5shl         ; 0.5 << ncishl
+        add             cishl, c0_5shl, cishl
+        ; * inv_scale
+        .reg            scmpyu, scshru
+        mpyu            cishl, mantissa, scmpyu         ; sc << ncishl + 15
+        ; - 0.5
+        shru            scmpyu, 15, scshru              ; sc << ncishl
+        sub             scshru, c0_5shl, scshru
+        ; v = sc - c
+        .reg            v, nscshl, nscshlreg
+        add             ncishl, 16, nscshl
+        shl             nscshl, 5, nscshlreg
+        add             nscshlreg, nscshl, nscshlreg
+        extu            scshru, nscshlreg, v            ; v << ncishl
+        .reg            nscshru, c
+        sub             ncishl, exponent, nscshru
+        shru            scshru, nscshru, c              ; c
+        ; Edge handling
+        .reg            iscnotoverflow
+        cmpltu          c, oW, iscnotoverflow
+[!iscnotoverflow] sub   oW, 1, c
+[!iscnotoverflow] zero  v
+        ; Get v1
+        .reg            ircsc, v1
+        shl             ircs, ncishl, ircsc
+        sub             ircsc, v, v1
+        ; Get c_
+        .reg            c_, isc_notoverflow
+        add             c, 1, c_
+        cmpltu          c_, oW, isc_notoverflow
+[!isc_notoverflow] sub  oW, 1, c_
 
         .endproc        ; resize
 
