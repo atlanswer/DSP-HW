@@ -48,18 +48,18 @@ riter:
         add             rishl, r0_5shl, rishl
         ; * inv_scale
         .reg            srmpyu, srshru
-        mpyu            rishl, mantissa, srmpyu         ; sr << nrishl + 15
+        mpyu            rishl, mantissa, srmpyu         ; sr << nrishl + 15 - exponent
         ; - 0.5
-        shru            srmpyu, 15, srshru              ; sr << nrishl
+        shru            srmpyu, 15, srshru              ; sr << nrishl - exponent
         sub             srshru, r0_5shl, srshru
         ; u = sr - r
-        .reg            u, nsrshl, nsrshlreg
-        add             nrishl, 16, nsrshl
+        .reg            u, nsrshru, nsrshl, nsrshlreg, r
+        sub             nrishl, exponent, nsrshru
+        mvk             32, nsrshl
+        sub             nsrshl, nsrshru, nsrshl
         shl             nsrshl, 5, nsrshlreg
         add             nsrshlreg, nsrshl, nsrshlreg
-        extu            srshru, nsrshlreg, u            ; u << nrishl
-        .reg            nsrshru, r
-        sub             nrishl, exponent, nsrshru
+        extu            srshru, nsrshlreg, u            ; u << nrishl - exponent
         shru            srshru, nsrshru, r              ; r
         ; Edge handling
         .reg            isrnotoverflow
@@ -69,8 +69,8 @@ riter:
         ; Get u1
         .reg            ircs, ircsr, u1                 ; INTER_RESIZE_COEF_SCALE
         mvk             1, ircs
-        shl             ircs, nrishl, ircsr
-        sub             ircsr, u, u1                    ; u1 << nrishl
+        shl             ircs, nsrshru, ircsr
+        sub             ircsr, u, u1                    ; u1 << nrishl - exponent
         ; Get r_
         .reg            r_, isr_notoverflow
         add             r, 1, r_
@@ -93,18 +93,18 @@ citer:
         add             cishl, c0_5shl, cishl
         ; * inv_scale
         .reg            scmpyu, scshru
-        mpyu            cishl, mantissa, scmpyu         ; sc << ncishl + 15
+        mpyu            cishl, mantissa, scmpyu         ; sc << ncishl + 15 - exponent
         ; - 0.5
-        shru            scmpyu, 15, scshru              ; sc << ncishl
+        shru            scmpyu, 15, scshru              ; sc << ncishl - exponent
         sub             scshru, c0_5shl, scshru
         ; v = sc - c
-        .reg            v, nscshl, nscshlreg
-        add             ncishl, 16, nscshl
+        .reg            v, nscshru, nscshl, nscshlreg, c
+        sub             ncishl, exponent, nscshru
+        mvk             32, nscshl
+        sub             nscshl, nscshru, nscshl
         shl             nscshl, 5, nscshlreg
         add             nscshlreg, nscshl, nscshlreg
-        extu            scshru, nscshlreg, v            ; v << ncishl
-        .reg            nscshru, c
-        sub             ncishl, exponent, nscshru
+        extu            scshru, nscshlreg, v            ; v << ncishl - exponent
         shru            scshru, nscshru, c              ; c
         ; Edge handling
         .reg            iscnotoverflow
@@ -113,8 +113,8 @@ citer:
 [!iscnotoverflow] zero  v
         ; Get v1
         .reg            ircsc, v1
-        shl             ircs, ncishl, ircsc
-        sub             ircsc, v, v1                    ; v1 << ncishl
+        shl             ircs, nscshru, ircsc
+        sub             ircsc, v, v1                    ; v1 << ncishl - exponent
         ; Get c_
         .reg            c_, isc_notoverflow
         add             c, 1, c_
@@ -148,9 +148,13 @@ citer:
         add             pxc64l, pxd64l, pxcdl
         .reg            pxh:pxl
         add             pxabh, pxcdh, pxh
-        add             pxabl, pxcdl, pxl
-        .reg            pxrh:pxrl
-        shru            pxh:pxl, nrishl, pxh:pxl
+        add             pxabl, pxcdl, pxl               ; px << nrishl - exponent + ncishl - exponent
+        ; Shift result back
+        .reg            pxrh:pxrl, npxshru
+        sub             nrishl, exponent, npxshru
+        sub             npxshru, exponent, npxshru
+        shru            pxh:pxl, npxshru, pxh:pxl       ; px << ncishl
+        ; Round to nearest: floor(px + 0.5)
         addu            pxl, c0_5shl, pxrh:pxrl
         add             pxrh, pxh, pxrh
         shru            pxrh:pxrl, ncishl, pxrh:pxrl
