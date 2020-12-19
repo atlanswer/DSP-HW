@@ -54,7 +54,7 @@ riter:
         sub             srshru, r0_5shl, srshru
         ; u = sr - r
         .reg            u, nsrshru, nsrshl, nsrshlreg, r
-        sub             nrishl, exponent, nsrshru
+        sub             nrishl, exponent, nsrshru       ; nsrshru = nrishl - exponent
         mvk             32, nsrshl
         sub             nsrshl, nsrshru, nsrshl
         shl             nsrshl, 5, nsrshlreg
@@ -99,7 +99,7 @@ citer:
         sub             scshru, c0_5shl, scshru
         ; v = sc - c
         .reg            v, nscshru, nscshl, nscshlreg, c
-        sub             ncishl, exponent, nscshru
+        sub             ncishl, exponent, nscshru       ; nscshru = ncishl - exponent
         mvk             32, nscshl
         sub             nscshl, nscshru, nscshl
         shl             nscshl, 5, nscshlreg
@@ -151,22 +151,21 @@ citer:
         add             pxabl, pxcdl, pxl               ; px << nrishl - exponent + ncishl - exponent
         ; Shift result back
         .reg            pxrh:pxrl, npxshru
-        sub             nrishl, exponent, npxshru
-        sub             npxshru, exponent, npxshru
+        sub             nsrshru, exponent, npxshru
         shru            pxh:pxl, npxshru, pxh:pxl       ; px << ncishl
         ; Round to nearest: floor(px + 0.5)
         addu            pxl, c0_5shl, pxrh:pxrl
         add             pxrh, pxh, pxrh
-        shru            pxrh:pxrl, ncishl, pxrh:pxrl
+        shru            pxrh:pxrl, ncishl, pxrh:pxrl    ; px
         ; Set row pointers
         .reg            pri
         ldw             *+dst[ri], pri
         ; Store result
         stb             pxrl, *+pri[ci]
         ; Iterate columns
-        bdec            citer, ci
+[ci]    bdec            citer, ci
         ; Iterate rows
-        bdec            riter, ri
+[ri]    bdec            riter, ri
 
         .endproc        ; resize
 
