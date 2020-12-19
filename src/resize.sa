@@ -29,10 +29,10 @@ resize: .cproc  src, dst, oW, oH, nW, nH, inv_scale
         sub             exponent, nexpbase, exponent
         ; Extract the mantissa (bit 23-0), but truncated to 15 bits.
         extu            inv_scale, 9, 17, mantissa
-		; Insert 1 to bit 16.
-		mvk             1, oneat16
-		shl             oneat16, 15, oneat16
-		or              oneat16, mantissa, mantissa     ; mantissa << 15
+        ; Insert 1 to bit 16.
+        mvk             1, oneat16
+        shl             oneat16, 15, oneat16
+        or              oneat16, mantissa, mantissa     ; mantissa << 15
         ; Bring up 0.5, but shifted left by 1
         .reg            f0_5
         mvk             1, f0_5                         ; 0.5 << 1
@@ -127,10 +127,37 @@ citer:
 
         ; Load pixels
         .reg            pxa, pxb, pxc, pxd
-        ldb             *+pr[c], pxa
-        ldb             *+pr[c_], pxb
-        ldb             *+pr_[c], pxc
-        ldb             *+pr_[c_], pxd
+        ldbu            *+pr[c], pxa
+        ldbu            *+pr[c_], pxb
+        ldbu            *+pr_[c], pxc
+        ldbu            *+pr_[c_], pxd
+        ; Perform interpolation
+        .reg            pxa32, pxa64h:pxa64l
+        mpyu            pxa, u1, pxa32
+        mpyli           v1, pxa32, pxa64h:pxa64l
+        .reg            pxb32, pxb64h:pxb64l
+        mpyu            pxb, u, pxb32
+        mpyli           v1, pxb32, pxb64h:pxb64l
+        .reg            pxc32, pxc64h:pxc64l
+        mpyu            pxc, u1, pxc32
+        mpyli           v, pxc32, pxc64h:pxc64l
+        .reg            pxd32, pxd64h:pxd64l
+        mpyu            pxd, u, pxd32
+        mpyli           v, pxd32, pxd64h:pxd64l
+        .reg            pxabh:pxabl
+        add             pxa64h, pxb64h, pxabh
+        add             pxa64l, pxb64l, pxabl
+        .reg            pxcdh:pxcdl
+        add             pxc64h, pxd64h, pxcdh
+        add             pxc64l, pxd64l, pxcdl
+        .reg            pxh:pxl
+        add             pxabh, pxcdh, pxh
+        add             pxabl, pxcdl, pxl
+        .reg            pxrh:pxrl
+        shru            pxh:pxl, nrishl, pxh:pxl
+        addu            pxl, c0_5shl, pxrh:pxrl
+        add             pxrh, pxh, pxrh
+        shru            pxrh:pxrl, ncishl, pxrh:pxrl
 
         .endproc        ; resize
 
