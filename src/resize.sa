@@ -2,8 +2,8 @@
 ; @file resize.sa
 ; @author Atlanswer (atlanswer@gmail.com)
 ; @brief Resize linear assembly implementation.
-; @version 0.1.2
-; @date 2020-12-18
+; @version 0.2
+; @date 2020-12-19
 ; 
 ; @copyright Copyright (c) 2020
 ; 
@@ -13,10 +13,6 @@
 
         .def    resize
 resize: .cproc  src, dst, oW, oH, nW, nH, inv_scale
-        ; Set image base pointers
-        .reg            psrc, pdst
-        addaw           src, oH, psrc
-        addaw           dst, nH, pdst
         ; For loop counter
         .reg            ri, ci
         sub             nH, 1, ri
@@ -79,11 +75,9 @@ riter:
         cmpltu          r_, oH, isr_notoverflow
 [!isr_notoverflow] sub  oH, 1, r_
         ; Set row pointers
-        .reg            offsetr, pr, offsetr_, pr_
-        mpy             oW, r, offsetr
-        addaw           psrc, offsetr, pr
-        mpy             oW, r_, offsetr_
-        addaw           psrc, offsetr_, pr_
+        .reg            pr, pr_
+        ldw             *+src[r], pr
+        ldw             *+src[r_], pr_
 citer:
         ; Formula: sc = (ci + 0.5) * inv_scale - 0.5
         ; Shifting ci left
@@ -159,9 +153,8 @@ citer:
         add             pxrh, pxh, pxrh
         shru            pxrh:pxrl, ncishl, pxrh:pxrl
         ; Set row pointers
-        .reg            offsetri, pri
-        mpy             nW, ri, offsetri
-        addaw           pdst, offsetri, pri
+        .reg            pri
+        ldw             *+dst[ri], pri
         ; Store result
         stb             pxrl, *+pri[ci]
         ; Iterate columns
