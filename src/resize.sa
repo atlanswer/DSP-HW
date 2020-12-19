@@ -19,8 +19,8 @@ resize: .cproc  src, dst, oW, oH, nW, nH, inv_scale
         addaw           dst, nH, pdst
         ; For loop counter
         .reg            ri, ci
-        mv              nH, ri
-        mv              nW, ci
+        sub             nH, 1, ri
+        sub             nW, 1, ci
         ; For breaking down inv_scale
         .reg            exponent, mantissa, nexpbase, oneat16
         ; Extract the exponent (bit 31-24).
@@ -158,6 +158,16 @@ citer:
         addu            pxl, c0_5shl, pxrh:pxrl
         add             pxrh, pxh, pxrh
         shru            pxrh:pxrl, ncishl, pxrh:pxrl
+        ; Set row pointers
+        .reg            offsetri, pri
+        mpy             nW, ri, offsetri
+        addaw           pdst, offsetri, pri
+        ; Store result
+        stb             pxrl, *+pri[ci]
+        ; Iterate columns
+        bdec            citer, ci
+        ; Iterate rows
+        bdec            riter, ri
 
         .endproc        ; resize
 
