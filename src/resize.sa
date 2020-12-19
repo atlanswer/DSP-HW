@@ -13,10 +13,6 @@
 
         .def    resize
 resize: .cproc  src, dst, oW, oH, nW, nH, inv_scale
-        ; For loop counter
-        .reg            ri, ci
-        sub             nH, 1, ri
-        sub             nW, 1, ci
         ; For breaking down inv_scale
         .reg            exponent, mantissa, nexpbase, oneat16
         ; Extract the exponent (bit 31-24).
@@ -32,7 +28,13 @@ resize: .cproc  src, dst, oW, oH, nW, nH, inv_scale
         ; Bring up 0.5, but shifted left by 1
         .reg            f0_5
         mvk             1, f0_5                         ; 0.5 << 1
+        ; Row iterator
+        .reg            ri
+        sub             nH, 1, ri
+        ; Column iterator
+        .reg            ci
 riter:
+        sub             nW, 1, ci
         ; Cast index from the new image to the original image.
         ; Formula: sr = (ri + 0.5) * inv_scale - 0.5
         ; Shifting ri left
