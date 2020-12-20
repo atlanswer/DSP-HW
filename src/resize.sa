@@ -38,10 +38,12 @@ riter:
         ; Cast index from the new image to the original image.
         ; Formula: sr = (ri + 0.5) * inv_scale - 0.5
         ; Shifting ri left
-        .reg            nrishl, rishl, nr0_5shl, r0_5shl
+        .reg            nrishl, rishl, nr0_5shl, r0_5shl, isnrishloverflow
         ; ri + 0.5
         lmbd            1, ri, nrishl
         sub             nrishl, 16, nrishl
+        cmpgtu          nrishl, 15, isnrishloverflow
+[isnrishloverflow] mvk  15, nrishl
         shl             ri, nrishl, rishl               ; ri << nrishl
         sub             nrishl, 1, nr0_5shl
         shl             f0_5, nr0_5shl, r0_5shl         ; 0.5 << nrishl
@@ -83,10 +85,12 @@ riter:
 citer:
         ; Formula: sc = (ci + 0.5) * inv_scale - 0.5
         ; Shifting ci left
-        .reg            ncishl, cishl, nc0_5shl, c0_5shl
+        .reg            ncishl, cishl, nc0_5shl, c0_5shl, isncishloverflow
         ; ci + 0.5
         lmbd            1, ci, ncishl
         sub             ncishl, 16, ncishl
+        cmpgtu          ncishl, 15, isncishloverflow
+[isncishloverflow] mvk  15, ncishl
         shl             ci, ncishl, cishl               ; ci << ncishl
         sub             ncishl, 1, nc0_5shl
         shl             f0_5, nc0_5shl, c0_5shl         ; 0.5 << ncishl

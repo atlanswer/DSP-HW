@@ -27,7 +27,7 @@ int main(void) {
     printf("[main] Read image completed.\n");
 
     /// Process images.
-    BITMAP ximg = StretchBlt(&oimg, 2);
+    BITMAP ximg = StretchBlt(&oimg, 1.5);
     printf("[main] Image interpolation completed.\n");
 
     /// Save the image.
