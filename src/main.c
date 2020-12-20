@@ -15,7 +15,7 @@
 // Custom headers
 #include "customwingdi.h"
 // Image filepath constant
-const char OIMGPATH[] = "../res/lena512.bmp";
+const char OIMGPATH[] = "../res/lena32.bmp";
 const char XIMGPATH[] = "../res/output.bmp";
 
 int main(void) {
@@ -27,7 +27,7 @@ int main(void) {
     printf("[main] Read image completed.\n");
 
     /// Process images.
-    BITMAP ximg = StretchBlt(&oimg, 1.5);
+    BITMAP ximg = StretchBlt(&oimg, 2);
     printf("[main] Image interpolation completed.\n");
 
     /// Save the image.

@@ -132,18 +132,20 @@ citer:
         ldbu            *+pr_[c], pxc
         ldbu            *+pr_[c_], pxd
         ; Perform interpolation
+        ; pxa * u1 * v1
         .reg            pxa32, pxa64h:pxa64l
         mpyu            pxa, u1, pxa32
-        mpyli           v1, pxa32, pxa64h:pxa64l
+        mpy32u          v1, pxa32, pxa64h:pxa64l
+        ; pxb * u * v1
         .reg            pxb32, pxb64h:pxb64l
         mpyu            pxb, u, pxb32
-        mpyli           v1, pxb32, pxb64h:pxb64l
+        mpy32u          v1, pxb32, pxb64h:pxb64l
         .reg            pxc32, pxc64h:pxc64l
         mpyu            pxc, u1, pxc32
-        mpyli           v, pxc32, pxc64h:pxc64l
+        mpy32u          v, pxc32, pxc64h:pxc64l
         .reg            pxd32, pxd64h:pxd64l
         mpyu            pxd, u, pxd32
-        mpyli           v, pxd32, pxd64h:pxd64l
+        mpy32u          v, pxd32, pxd64h:pxd64l
         .reg            pxabh:pxabl
         add             pxa64h, pxb64h, pxabh
         add             pxa64l, pxb64l, pxabl
