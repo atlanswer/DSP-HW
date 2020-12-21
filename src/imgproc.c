@@ -94,8 +94,8 @@ void resize(BYTE** const src, BYTE** const dst,
             BYTE pd = src[r_][c_];
             // Bilinear interpolation
             // DWORD val = U1 * V1 * pa
-            //             + U * V1 * pb
-            //             + U1 * V * pc
+            //             + U1 * V * pb
+            //             + U * V1 * pc
             //             + U * V * pd;
             float val2 = pa * (1 - u) * (1 - v)
                          + pb * (1 - u) * v

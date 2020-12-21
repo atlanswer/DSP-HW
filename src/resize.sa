@@ -72,10 +72,10 @@ riter:
         cmplt           srshl, 0, issrshlunderflow
 [issrshlunderflow] zero srshl
         ; u = sr - r
-        ; |31      nrishl + 1|nrishl      0|
-        ; |               r  |      u      |
+        ; |31      nrishl|nrishl - 1     0|
+        ; |           r  |       u        |
         .reg            u, nushl, nushlreg, r
-        mvk             31, nushl
+        mvk             32, nushl
         sub             nushl, nrishl, nushl
         shl             nushl, 5, nushlreg
         add             nushlreg, nushl, nushlreg
@@ -125,7 +125,7 @@ citer:
 [isscshlunderflow] zero scshl
         ; v = sc - c
         .reg            v, nvshl, nvshlreg, c
-        mvk             31, nvshl
+        mvk             32, nvshl
         sub             nvshl, ncishl, nvshl
         shl             nvshl, 5, nvshlreg
         add             nvshlreg, nvshl, nvshlreg
@@ -157,23 +157,23 @@ citer:
         .reg            pxa32, pxa64h:pxa64l
         mpyu            pxa, u1, pxa32
         mpy32u          v1, pxa32, pxa64h:pxa64l
-        ; pxb * u * v1
+        ; pxb * u1 * v
         .reg            pxb32, pxb64h:pxb64l
-        mpyu            pxb, u, pxb32
-        mpy32u          v1, pxb32, pxb64h:pxb64l
-        ; pxc * u1 * v
+        mpyu            pxb, u1, pxb32
+        mpy32u          v, pxb32, pxb64h:pxb64l
+        ; pxc * u * v1
         .reg            pxc32, pxc64h:pxc64l
-        mpyu            pxc, u1, pxc32
-        mpy32u          v, pxc32, pxc64h:pxc64l
+        mpyu            pxc, u, pxc32
+        mpy32u          v1, pxc32, pxc64h:pxc64l
         ; pxd * u * v
         .reg            pxd32, pxd64h:pxd64l
         mpyu            pxd, u, pxd32
         mpy32u          v, pxd32, pxd64h:pxd64l
-        ; pxa * u1 * v1 + pxb * u * v1
+        ; pxa * u1 * v1 + pxb * u1 * v
         .reg            pxabh:pxabl
         add             pxa64h, pxb64h, pxabh
         add             pxa64l, pxb64l, pxabl
-        ; pxc * u1 * v + pxd * u * v
+        ; pxc * u * v1 + pxd * u * v
         .reg            pxcdh:pxcdl
         add             pxc64h, pxd64h, pxcdh
         add             pxc64l, pxd64l, pxcdl
