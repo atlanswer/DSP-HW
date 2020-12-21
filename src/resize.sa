@@ -46,12 +46,10 @@ riter:
         ; Cast index from the new image to the original image.
         ; Formula: sr = (ri + 0.5) * inv_scale - 0.5
         ; Shifting ri left
-        .reg            nrishl, rishl, nr0_5shl, r0_5shl, isnrishlgt15
+        .reg            nrishl, rishl, nr0_5shl, r0_5shl
         ; ri + 0.5
         lmbd            1, ri, nrishl
         sub             nrishl, 16, nrishl
-        cmpgtu          nrishl, 15, isnrishlgt15
-[isnrishlgt15] mvk      15, nrishl                      ; nrishl <= 15
         ; |31        16|15         0|
         ; |000000000000|    rishl   |
         shl             ri, nrishl, rishl               ; ri << nrishl
@@ -89,8 +87,9 @@ riter:
         ; Get u1
         .reg            coefscale, coefscaler, u1       ; INTER_RESIZE_COEF_SCALE
         mvk             1, coefscale
-        shl             coefscale, nrishl, coefscaler
-        sub             coefscaler, u, u1               ; u1 << nrishl
+[u]     shl             coefscale, nrishl, coefscaler
+[u]     sub             coefscaler, u, u1               ; u1 << nrishl
+[!u]    shl             coefscale, 15, u1
         ; Get r_
         .reg            r_, isr_notoverflow
         add             r, 1, r_
@@ -103,12 +102,10 @@ riter:
 citer:
         ; Formula: sc = (ci + 0.5) * inv_scale - 0.5
         ; Shifting ci left
-        .reg            ncishl, cishl, nc0_5shl, c0_5shl, isncishlgt15
+        .reg            ncishl, cishl, nc0_5shl, c0_5shl
         ; ci + 0.5
         lmbd            1, ci, ncishl
         sub             ncishl, 16, ncishl
-        cmpgtu          ncishl, 15, isncishlgt15
-[isncishlgt15] mvk      15, ncishl                      ; ncishl <= 15
         shl             ci, ncishl, cishl               ; ci << ncishl
         sub             ncishl, 1, nc0_5shl
         shl             f0_5, nc0_5shl, c0_5shl         ; 0.5 << ncishl
@@ -138,8 +135,9 @@ citer:
 [!iscnotoverflow] zero  v
         ; Get v1
         .reg            coefscalec, v1
-        shl             coefscale, ncishl, coefscalec
-        sub             coefscalec, v, v1               ; v1 << ncishl
+[v]     shl             coefscale, ncishl, coefscalec
+[v]     sub             coefscalec, v, v1               ; v1 << ncishl
+[!v]    shl             coefscale, 15, v1
         ; Get c_
         .reg            c_, isc_notoverflow
         add             c, 1, c_
@@ -170,17 +168,20 @@ citer:
         mpyu            pxd, u, pxd32
         mpy32u          v, pxd32, pxd64h:pxd64l
         ; pxa * u1 * v1 + pxb * u1 * v
-        .reg            pxabh:pxabl
+        .reg            pxabh, pxablh:pxabl
         add             pxa64h, pxb64h, pxabh
-        add             pxa64l, pxb64l, pxabl
+        addu            pxa64l, pxb64l, pxablh:pxabl
+        add             pxablh, pxabh, pxabh
         ; pxc * u * v1 + pxd * u * v
-        .reg            pxcdh:pxcdl
+        .reg            pxcdh, pxcdlh:pxcdl
         add             pxc64h, pxd64h, pxcdh
-        add             pxc64l, pxd64l, pxcdl
+        addu            pxc64l, pxd64l, pxcdlh:pxcdl
+        add             pxcdlh, pxcdh, pxcdh
         ; Sum up everything
-        .reg            pxh:pxl
-        add             pxabh, pxcdh, pxh
-        add             pxabl, pxcdl, pxl               ; px << nrishl + ncishl
+        .reg            pxlh, pxh:pxl
+        add             pxabh, pxcdh, pxlh
+        addu            pxabl, pxcdl, pxh:pxl           ; px << nrishl + ncishl
+        add             pxlh, pxh, pxh
         ; Shift result back
         shru            pxh:pxl, nrishl, pxh:pxl        ; px << ncishl
         ; Round to nearest: floor(px + 0.5)
