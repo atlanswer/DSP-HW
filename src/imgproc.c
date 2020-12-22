@@ -2,8 +2,8 @@
  * @file imgproc.c
  * @author Atlanswer (atlanswer@gmail.com)
  * @brief Image processing algorithm implementations.
- * @version 0.2
- * @date 2020-12-11
+ * @version 1.0
+ * @date 2020-12-25
  * 
  * @copyright Copyright (c) 2020
  * 
@@ -36,17 +36,20 @@ clock_t clock() {
     return low;
 }
 
+// Implementation switch
+#ifndef USE_SA_IMPL
+
 void resize(BYTE** const src, BYTE** const dst,
             const LONG oW, const LONG oH,
             const LONG nW, const LONG nH,
-            const float scale) {
+            const float inv_scale) {
     /// Row and column index.
     LONG ri, ci;
     // Iterate over rows.
     for (ri = 0; ri < nH; ++ri) {
         dprintf(("\r[resize] Processing row index: %d\n", ri));
         // Convert pixel index to a location in the original image.
-        float sr = (ri + 0.5f) / scale - 0.5f;
+        float sr = (ri + 0.5f) * inv_scale - 0.5f;
         // Round towards the origin.
         LONG r = floor(sr);
         // Relative distance
@@ -60,16 +63,16 @@ void resize(BYTE** const src, BYTE** const dst,
             r = oH - 1;
             u = 0;
         }
-        // u = u * INTER_RESIZE_COEF_SCALE;
-        // INT U = rint(u);
-        // INT U1 = rint(INTER_RESIZE_COEF_SCALE - u);
-        
+        #ifdef USE_INT
+        u = u * INTER_RESIZE_COEF_SCALE;
+        INT U = rint(u);
+        INT U1 = rint(INTER_RESIZE_COEF_SCALE - u);
+        #endif /** USE_INT **/
         // Round towards the other end, edge case included.
         LONG r_ = min(r + 1, oH - 1);
-
         // Iterate over columns.
         for(ci = 0; ci < nW; ++ci) {
-            float sc = (ci + 0.5f) / scale - 0.5f;
+            float sc = (ci + 0.5f) * inv_scale - 0.5f;
             LONG c = floor(sc);
             float v = sc - c;
             if (c < 0) {
@@ -80,9 +83,11 @@ void resize(BYTE** const src, BYTE** const dst,
                 c = oW - 1;
                 v = 0;
             }
-            // v = v * INTER_RESIZE_COEF_SCALE;
-            // INT V = rint(v);
-            // INT V1 = rint(INTER_RESIZE_COEF_SCALE - v);
+            #ifdef USE_INT
+            v = v * INTER_RESIZE_COEF_SCALE;
+            INT V = rint(v);
+            INT V1 = rint(INTER_RESIZE_COEF_SCALE - v);
+            #endif /** USE_INT **/
             LONG c_ = min(c + 1, oW - 1);
             // Fetch pixel values of the nearest four pixels
             BYTE pa = src[r][c];
@@ -90,17 +95,22 @@ void resize(BYTE** const src, BYTE** const dst,
             BYTE pc = src[r_][c];
             BYTE pd = src[r_][c_];
             // Bilinear interpolation
-            // DWORD val = U1 * V1 * pa
-            //             + U * V1 * pb
-            //             + U1 * V * pc
-            //             + U * V * pd;
+            #ifdef USE_INT
+            DWORD val = U1 * V1 * pa
+                        + U1 * V * pb
+                        + U * V1 * pc
+                        + U * V * pd;
+            // Assign to the output image.
+            dst[ri][ci] = (val + (1 << (CAST_BITS - 1))) >> CAST_BITS;
+            #else
             float val2 = pa * (1 - u) * (1 - v)
                          + pb * (1 - u) * v
                          + pc * u * (1 - v)
                          + pd * u * v;
-            // Assign to the output image.
-            // dst[ri][ci] = (val + (1 << (CAST_BITS - 1))) >> CAST_BITS;
             dst[ri][ci] = floor(val2 + 0.5);
+            #endif /** USE_INT **/
         }
     }
 }
+
+#endif

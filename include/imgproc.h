@@ -70,13 +70,13 @@ clock_t clock(void);
  * 
  * @warning Only capable of 8-bit greyscale image.
  * 
- * Inspired by OpenCL's implementation resizeNN.
- * @see https://github.com/opencv/opencv/blob/master/modules/imgproc/src/opencl/resize.cl
+ * Inspired by OpenCL's implementation resizeLN.
+ * @see https://github.com/opencv/opencv/blob/master/modules/imgproc/src/opencl/resize.cl#L176-L208
  *
  */
 void resize(BYTE** const src, BYTE** const dst,
             const LONG oW, const LONG oH,
             const LONG nW, const LONG nH,
-            const float scale);
+            const float inv_scale);
 
 #endif /* _IMGPROC_H_ */

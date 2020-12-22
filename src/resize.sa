@@ -1,0 +1,206 @@
+;
+; @file resize.sa
+; @author Atlanswer (atlanswer@gmail.com)
+; @brief Resize linear assembly implementation.
+; @version 1.0
+; @date 2020-12-25
+; 
+; @copyright Copyright (c) 2020
+; 
+;
+        ; Implementation switch
+        .if     $isdefed("USE_SA_IMPL")
+
+        .def    resize
+resize: .cproc  src, dst, oW, oH, nW, nH, inv_scale
+        ; For breaking down inv_scale
+        ; |31 |30      23|22       0|
+        ; | s | exponent | mantissa |
+        .reg            exponent, mantissa, nexpbase, oneat16, ifa
+        ; Extract the exponent (bit 30-23).
+        ; |31           8|7        0|
+        ; |00000000000000| exponent |
+        extu            inv_scale, 1, 24, exponent
+        mvk             127, nexpbase
+        sub             exponent, nexpbase, exponent
+        ; Extract the mantissa (bit 22-0), but truncated to 15 bits.
+        ; |31        15|14         0|
+        ; |000000000000|  mantissa  |
+        extu            inv_scale, 9, 17, mantissa
+        ; Insert 1 to bit 16.
+        mvk             1, oneat16
+        shl             oneat16, 15, oneat16
+        ; |31        16|15         0|
+        ; |000000000000|     ifa    |
+        or              oneat16, mantissa, ifa          ; inv_scale << 15 - exponent
+        ; Bring up 0.5, but shifted left by 1
+        .reg            f0_5
+        mvk             1, f0_5                         ; 0.5 << 1
+        ; Row iterator
+        .reg            ri
+        sub             nH, 1, ri                       ; nH - 1
+        ; Column iterator
+        .reg            ci
+riter:
+        sub             nW, 1, ci                       ; nW - 1
+        ; Cast index from the new image to the original image.
+        ; Formula: sr = (ri + 0.5) * inv_scale - 0.5
+        ; Shifting ri left
+        .reg            nrishl, rishl, nr0_5shl, r0_5shl
+        ; ri + 0.5
+        lmbd            1, ri, nrishl
+[ri]   sub             nrishl, 16, nrishl
+[!ri]    mvk             15, nrishl
+        ; |31        16|15         0|
+        ; |000000000000|    rishl   |
+        shl             ri, nrishl, rishl               ; ri << nrishl
+        sub             nrishl, 1, nr0_5shl
+        shl             f0_5, nr0_5shl, r0_5shl         ; 0.5 << nrishl
+        add             rishl, r0_5shl, rishl           ; (ri + 0.5) << nrishl
+        ; * inv_scale
+        .reg            ri_ifa, srshl, nalign0_5
+        ; |31                      0|
+        ; |          ri_ifa         |
+        mpyu            rishl, ifa, ri_ifa              ; sr << nrishl + 15 - exponent
+        ; - 0.5
+        sub             15, exponent, nalign0_5         ; 15 - exponent
+        shru            ri_ifa, nalign0_5, srshl
+        sub             srshl, r0_5shl, srshl           ; sr << nrishl
+        ; Edge handling
+        .reg            issrshlunderflow
+        cmplt           srshl, 0, issrshlunderflow
+[issrshlunderflow] zero srshl
+        ; u = sr - r
+        ; |31      nrishl|nrishl - 1     0|
+        ; |           r  |       u        |
+        .reg            u, nushl, nushlreg, r
+        mvk             32, nushl
+        sub             nushl, nrishl, nushl
+        shl             nushl, 5, nushlreg
+        add             nushlreg, nushl, nushlreg
+        extu            srshl, nushlreg, u              ; u << nrishl
+        shru            srshl, nrishl, r                ; r
+        ; Edge handling
+        .reg            isrnotoverflow
+        cmpltu          r, oH, isrnotoverflow
+[!isrnotoverflow] sub   oH, 1, r
+[!isrnotoverflow] zero  u
+        ; Get u1
+        .reg            coefscale, coefscaler, u1       ; INTER_RESIZE_COEF_SCALE
+        mvk             1, coefscale
+[u]     shl             coefscale, nrishl, coefscaler
+[u]     sub             coefscaler, u, u1               ; u1 << nrishl
+[!u]    shl             coefscale, nrishl, u1
+        ; Get r_
+        .reg            r_, isr_notoverflow
+        add             r, 1, r_
+        cmpltu          r_, oH, isr_notoverflow
+[!isr_notoverflow] sub  oH, 1, r_
+        ; Set row pointers
+        .reg            pr, pr_
+        ldw             *+src[r], pr
+        ldw             *+src[r_], pr_
+citer:
+        ; Formula: sc = (ci + 0.5) * inv_scale - 0.5
+        ; Shifting ci left
+        .reg            ncishl, cishl, nc0_5shl, c0_5shl
+        ; ci + 0.5
+        lmbd            1, ci, ncishl
+[ci]    sub             ncishl, 16, ncishl
+[!ci]   mvk             15, ncishl
+        shl             ci, ncishl, cishl               ; ci << ncishl
+        sub             ncishl, 1, nc0_5shl
+        shl             f0_5, nc0_5shl, c0_5shl         ; 0.5 << ncishl
+        add             cishl, c0_5shl, cishl           ; (ci + 0.5) << ncishl
+        ; * inv_scale
+        .reg            ci_ifa, scshl
+        mpyu            cishl, ifa, ci_ifa              ; sc << ncishl + 15 - exponent
+        ; - 0.5
+        shru            ci_ifa, nalign0_5, scshl
+        sub             scshl, c0_5shl, scshl           ; sc << ncishl
+        ; Edge handling
+        .reg            isscshlunderflow
+        cmplt           scshl, 0, isscshlunderflow
+[isscshlunderflow] zero scshl
+        ; v = sc - c
+        .reg            v, nvshl, nvshlreg, c
+        mvk             32, nvshl
+        sub             nvshl, ncishl, nvshl
+        shl             nvshl, 5, nvshlreg
+        add             nvshlreg, nvshl, nvshlreg
+        extu            scshl, nvshlreg, v              ; v << ncishl
+        shru            scshl, ncishl, c                ; c
+        ; Edge handling
+        .reg            iscnotoverflow
+        cmpltu          c, oW, iscnotoverflow
+[!iscnotoverflow] sub   oW, 1, c
+[!iscnotoverflow] zero  v
+        ; Get v1
+        .reg            coefscalec, v1
+[v]     shl             coefscale, ncishl, coefscalec
+[v]     sub             coefscalec, v, v1               ; v1 << ncishl
+[!v]    shl             coefscale, ncishl, v1
+        ; Get c_
+        .reg            c_, isc_notoverflow
+        add             c, 1, c_
+        cmpltu          c_, oW, isc_notoverflow
+[!isc_notoverflow] sub  oW, 1, c_
+
+        ; Load pixels
+        .reg            pxa, pxb, pxc, pxd
+        ldbu            *+pr[c], pxa
+        ldbu            *+pr[c_], pxb
+        ldbu            *+pr_[c], pxc
+        ldbu            *+pr_[c_], pxd
+        ; Perform interpolation
+        ; pxa * u1 * v1
+        .reg            pxa32, pxa64h:pxa64l
+        mpyu            pxa, u1, pxa32
+        mpy32u          v1, pxa32, pxa64h:pxa64l
+        ; pxb * u1 * v
+        .reg            pxb32, pxb64h:pxb64l
+        mpyu            pxb, u1, pxb32
+        mpy32u          v, pxb32, pxb64h:pxb64l
+        ; pxc * u * v1
+        .reg            pxc32, pxc64h:pxc64l
+        mpyu            pxc, u, pxc32
+        mpy32u          v1, pxc32, pxc64h:pxc64l
+        ; pxd * u * v
+        .reg            pxd32, pxd64h:pxd64l
+        mpyu            pxd, u, pxd32
+        mpy32u          v, pxd32, pxd64h:pxd64l
+        ; pxa * u1 * v1 + pxb * u1 * v
+        .reg            pxabh, pxablh:pxabl
+        add             pxa64h, pxb64h, pxabh
+        addu            pxa64l, pxb64l, pxablh:pxabl
+        add             pxablh, pxabh, pxabh
+        ; pxc * u * v1 + pxd * u * v
+        .reg            pxcdh, pxcdlh:pxcdl
+        add             pxc64h, pxd64h, pxcdh
+        addu            pxc64l, pxd64l, pxcdlh:pxcdl
+        add             pxcdlh, pxcdh, pxcdh
+        ; Sum up everything
+        .reg            pxlh, pxh:pxl
+        add             pxabh, pxcdh, pxlh
+        addu            pxabl, pxcdl, pxh:pxl           ; px << nrishl + ncishl
+        add             pxlh, pxh, pxh
+        ; Shift result back
+        shru            pxh:pxl, nrishl, pxh:pxl        ; px << ncishl
+        ; Round to nearest: floor(px + 0.5)
+        .reg            pxrh:pxrl
+        addu            pxl, c0_5shl, pxrh:pxrl
+        add             pxrh, pxh, pxrh
+        shru            pxrh:pxrl, ncishl, pxrh:pxrl    ; px
+        ; Set row pointers
+        .reg            pri
+        ldw             *+dst[ri], pri
+        ; Store result
+        stb             pxrl, *+pri[ci]
+        ; Iterate columns
+[ci]    bdec            citer, ci
+        ; Iterate rows
+[ri]    bdec            riter, ri
+
+        .endproc        ; resize
+
+        .endif          ; $isdefed("USE_SA_IMPL")
