@@ -9,6 +9,11 @@
 ; 
 ;
 
-;            .def cvtColor
-;cvtColor:   .cproc  Y, Cb, Cr, pR, pG, pB
-;            .endproc
+            .def cvtColor
+cvtColor:   .cproc  Y, Cb, Cr, pR, pG, pB
+
+            stb     Y, *pR
+            stb     Cb, *pG
+            stb     Cr, *pB
+
+            .endproc

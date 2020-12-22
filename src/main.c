@@ -31,7 +31,7 @@ int main(void) {
     int s1, s2, s3;
     printf("Enter Y, Cb, Cr:");
     scanf("%d, %d, %d", &s1, &s2, &s3);
-    unsigned char Y, Cb, Cr, R, G, B;
+    unsigned char Y, Cb, Cr, Rc, Gc, Bc, R, G, B;
     if (s1 < 0 || s1 > 255 || s2 < 0 || s2 > 255 || s3 < 0 || s3 > 255) {
         fprintf(stderr, "[main] Out of range input(s).\n");
         return EXIT_FAILURE;
@@ -42,9 +42,11 @@ int main(void) {
     }
     // Cycle counter
     TSCL = 1;
+    cvtColor_C(Y, Cb, Cr, &Rc, &Gc, &Bc);
     clock_t start_t = clock();
     cvtColor(Y, Cb, Cr, &R, &G, &B);
     clock_t elapse_t = clock() - start_t;
+    printf("Y:%d, Cb:%d, Cr:%d --> R:%d, G:%d, B:%d\n", Y, Cb, Cr, Rc, Gc, Bc);
     printf("Y:%d, Cb:%d, Cr:%d --> R:%d, G:%d, B:%d\n", Y, Cb, Cr, R, G, B);
     printf("Conversion took %d cycles.\n", elapse_t);
     return EXIT_SUCCESS;
