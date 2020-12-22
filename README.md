@@ -6,7 +6,7 @@ Homework for _Principles and Applications of DSP Devices_, SYSU SEIT, Fall 2020.
 ##### 2x bilinear interpolation Demo:
 
 ![Demo](res/demo.jpg)
-Resize function cycle count in different implementations: (**debug mode, optimization not enabled**)
+512 x 1.5 `resize` function cycle count in different implementations (debug mode, optimization not enabled):
 |C float approach|C int approach|Linear assembly|
 |:---:|:---:|:---:|
 |1654442635|1027521855|60202045|
@@ -105,7 +105,7 @@ Code, build and hit debug!
 ### Homework List
 
 - [x] 实验 1：用 C 语言实现 8 位 DIB 双线性插值
-- [ ] 实验 2：双线性插值函数使用线性汇编语言实现
+- [x] 实验 2：双线性插值函数使用线性汇编语言实现
 - [ ] 实验 3：用 C 语言和线性汇编语言完成从 YC<sub>b</sub>C<sub>r</sub> 彩色空间到 RGB 彩色空间的转换
 - [ ] 实验 4：用 C 语言完成线性变换程序并优化
 - [ ] 实验 5：用 C 语言和线性汇编语言实现中值滤波器
