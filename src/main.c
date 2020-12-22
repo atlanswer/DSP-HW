@@ -2,8 +2,8 @@
  * @file main.c
  * @author Atlanswer (atlanswer@gmail.com)
  * @brief Main logic.
- * @version 0.3
- * @date 2020-12-15
+ * @version 1.0
+ * @date 2020-12-25
  * 
  * @copyright Copyright (c) 2020
  * 

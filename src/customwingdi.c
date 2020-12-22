@@ -2,8 +2,8 @@
  * @file customwingdi.c
  * @author Atlanswer (atlanswer@gmail.com)
  * @brief Custom bitmap processing functions.
- * @version 0.2
- * @date 2020-12-11
+ * @version 1.0
+ * @date 2020-12-16
  * 
  * @copyright Copyright (c) 2020
  * 

@@ -2,8 +2,8 @@
 ; @file resize.sa
 ; @author Atlanswer (atlanswer@gmail.com)
 ; @brief Resize linear assembly implementation.
-; @version 0.2
-; @date 2020-12-19
+; @version 1.0
+; @date 2020-12-25
 ; 
 ; @copyright Copyright (c) 2020
 ; 
@@ -49,7 +49,8 @@ riter:
         .reg            nrishl, rishl, nr0_5shl, r0_5shl
         ; ri + 0.5
         lmbd            1, ri, nrishl
-        sub             nrishl, 16, nrishl
+[ri]   sub             nrishl, 16, nrishl
+[!ri]    mvk             15, nrishl
         ; |31        16|15         0|
         ; |000000000000|    rishl   |
         shl             ri, nrishl, rishl               ; ri << nrishl
@@ -89,7 +90,7 @@ riter:
         mvk             1, coefscale
 [u]     shl             coefscale, nrishl, coefscaler
 [u]     sub             coefscaler, u, u1               ; u1 << nrishl
-[!u]    shl             coefscale, 15, u1
+[!u]    shl             coefscale, nrishl, u1
         ; Get r_
         .reg            r_, isr_notoverflow
         add             r, 1, r_
@@ -105,7 +106,8 @@ citer:
         .reg            ncishl, cishl, nc0_5shl, c0_5shl
         ; ci + 0.5
         lmbd            1, ci, ncishl
-        sub             ncishl, 16, ncishl
+[ci]    sub             ncishl, 16, ncishl
+[!ci]   mvk             15, ncishl
         shl             ci, ncishl, cishl               ; ci << ncishl
         sub             ncishl, 1, nc0_5shl
         shl             f0_5, nc0_5shl, c0_5shl         ; 0.5 << ncishl
@@ -137,7 +139,7 @@ citer:
         .reg            coefscalec, v1
 [v]     shl             coefscale, ncishl, coefscalec
 [v]     sub             coefscalec, v, v1               ; v1 << ncishl
-[!v]    shl             coefscale, 15, v1
+[!v]    shl             coefscale, ncishl, v1
         ; Get c_
         .reg            c_, isc_notoverflow
         add             c, 1, c_

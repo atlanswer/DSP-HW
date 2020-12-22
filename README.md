@@ -3,8 +3,13 @@
 中山大学电信院 EIT349 梁凡老师的 DSP 器件原理与应用课程作业（2020 秋）。  
 Homework for _Principles and Applications of DSP Devices_, SYSU SEIT, Fall 2020.
 
-**2x bilinear interpolation Demo:**
+##### 2x bilinear interpolation Demo:
+
 ![Demo](res/demo.jpg)
+Resize function cycle count in different implementations: (**debug mode, optimization not enabled**)
+|C float approach|C int approach|Linear assembly|
+|:---:|:---:|:---:|
+|1654442635|1027521855|60202045|
 
 **欢迎在 [Discussions](https://github.com/atlanswer/DSP-HW/discussions) 讨论，利用 [Issues](https://github.com/atlanswer/DSP-HW/issues) 跟踪代码问题， 以及提交 [PR](https://github.com/atlanswer/DSP-HW/pulls) 分享你的代码。**
 
@@ -87,6 +92,13 @@ Note: `Texas Instruments Simulators` connection is required to run the CPU cycle
 Other options are assumed to be default.
 
 #### How to run
+
+##### Specific settings for each task
+
+###### Task 1&2
+
+- Define `USE_SA_IMPL` to link `resize` function's linear assembly implementations, the C implementation would be used otherwise.
+- Define `USE_INT` to switch `resize` function's C implementation to its fixed-point multiplication approach, floating-point multiplication would be used otherwise.
 
 Code, build and hit debug!
 
