@@ -3,8 +3,15 @@
 中山大学电信院 EIT349 梁凡老师的 DSP 器件原理与应用课程作业（2020 秋）。  
 Homework for _Principles and Applications of DSP Devices_, SYSU SEIT, Fall 2020.
 
-**2x bilinear interpolation Demo:**
-![Demo](demo.jpg)
+##### 2x bilinear interpolation Demo:
+
+![Demo](res/demo.jpg)
+512 x 1.5 `resize` function cycle count in different implementations (debug mode, optimization not enabled):
+|C float approach|C int approach|Linear assembly|
+|:---:|:---:|:---:|
+|1654442635|1027521855|60202045|
+
+**欢迎在 [Discussions](https://github.com/atlanswer/DSP-HW/discussions) 讨论，利用 [Issues](https://github.com/atlanswer/DSP-HW/issues) 跟踪代码问题， 以及提交 [PR](https://github.com/atlanswer/DSP-HW/pulls) 分享你的代码。**
 
 ### Useful resources
 
@@ -17,6 +24,7 @@ Documents:
 - [TMS320C6000 Programmer's Guide](https://www.ti.com/lit/ug/spru198k)
 - [TI-RTOS Kernel (SYS/BIOS) User's Guide](https://www.ti.com/lit/pdf/spruex3)
 - [Introduction to TMS320C6000 DSP Optimization](https://www.ti.com/lit/an/sprabf2/sprabf2.pdf)
+- [TMS320C6000 Integer Division](https://www.ti.com/lit/an/spra707/spra707.pdf)
 - [Performance Tuning with the “Restrict” Keyword](https://processors.wiki.ti.com/images/f/ff/Bartley=Wiki_1.1=Performance_Tuning_with_the_RESTRICT_Keyword.pdf)
 
 Websites:
@@ -24,6 +32,7 @@ Websites:
 - [CCS Resource Index](https://www.ti.com/tool/CCSTUDIO)
 - [CCS Technical Documents](https://software-dl.ti.com/ccs/esd/documents/ccs_documentation-overview.html)
 - [Code Gneration Tools v7.4](https://www.ti.com/tool/download/C6000-CGT-7-4)
+- [Customizing the clock and time Functions](https://processors.wiki.ti.com/index.php/Customizing_the_clock_and_time_Functions)
 - [TI Processors Wiki](https://processors.wiki.ti.com/)
 - [TI DSP Overview](https://www.ti.com/processors/digital-signal-processors/overview.html)
 
@@ -58,7 +67,7 @@ Note: `Texas Instruments Simulators` connection is required to run the CPU cycle
     - C6000 Linker
         - Heap size for C/C++ dynamic memory allocation: `--heap_size=0x200000`
 
-    The program uses `malloc` to dynamically allocate memory for the images. The `.sysmem` section of memory should be adjust to accommodate every images since the default size of 1KB is clearly not enough. More info about the cmd file could be found at [here](https://software-dl.ti.com/ccs/esd/documents/sdto_cgt_Linker-Command-File-Primer.html).
+    The program uses `malloc` to dynamically allocate memory for the images. The `.sysmem` section of memory should be adjust to accommodate every images since the default size of 1KB is clearly not enough. More info about the cmd file could be found [here](https://software-dl.ti.com/ccs/esd/documents/sdto_cgt_Linker-Command-File-Primer.html).
 
 ##### Debug Configuration 
 
@@ -68,19 +77,35 @@ Note: `Texas Instruments Simulators` connection is required to run the CPU cycle
         - Debug Options: Full symbolic debug `-g`
         - Advanced Options
             - Predefined Symbols: `--define=DEBUG`
+            - Assembler Options: `--keep_asm`
 
 ##### Release Configuration
 
-**TBD**
+- Build
+    - C6000 Compiler
+        - Optimization: `-O2`
+        - Debug Options: Symbolic debug for program analysis `--symdebug:skeletal`
+        - Advanced Options
+            - Predefined Symbols: `--define=RELEASE`
+            - Runtime Model Options: Generate verbose software pipelining information `--mw`
+
+Other options are assumed to be default.
 
 #### How to run
+
+##### Specific settings for each task
+
+###### Task 1&2
+
+- Define `USE_SA_IMPL` to link `resize` function's linear assembly implementations, the C implementation would be used otherwise.
+- Define `USE_INT` to switch `resize` function's C implementation to its fixed-point multiplication approach, floating-point multiplication would be used otherwise.
 
 Code, build and hit debug!
 
 ### Homework List
 
 - [x] 实验 1：用 C 语言实现 8 位 DIB 双线性插值
-- [ ] 实验 2：双线性插值函数使用线性汇编语言实现
+- [x] 实验 2：双线性插值函数使用线性汇编语言实现
 - [ ] 实验 3：用 C 语言和线性汇编语言完成从 YC<sub>b</sub>C<sub>r</sub> 彩色空间到 RGB 彩色空间的转换
 - [ ] 实验 4：用 C 语言完成线性变换程序并优化
 - [ ] 实验 5：用 C 语言和线性汇编语言实现中值滤波器
