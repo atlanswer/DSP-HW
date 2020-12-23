@@ -40,14 +40,15 @@ int main(void) {
         Cb = s2;
         Cr = s3;
     }
+    printf("Y:%d, Cb:%d, Cr:%d\n", Y, Cb, Cr);
     // Cycle counter
     TSCL = 1;
     cvtColor_C(Y, Cb, Cr, &Rc, &Gc, &Bc);
     clock_t start_t = clock();
     cvtColor(Y, Cb, Cr, &R, &G, &B);
     clock_t elapse_t = clock() - start_t;
-    printf("Y:%d, Cb:%d, Cr:%d --> R:%d, G:%d, B:%d\n", Y, Cb, Cr, Rc, Gc, Bc);
-    printf("Y:%d, Cb:%d, Cr:%d --> R:%d, G:%d, B:%d\n", Y, Cb, Cr, R, G, B);
-    printf("Conversion took %d cycles.\n", elapse_t);
+    printf("--------- C ---------> R:%d, G:%d, B:%d\n", Rc, Gc, Bc);
+    printf("-- Linear assembly --> R:%d, G:%d, B:%d\n", R, G, B);
+    printf("Linear assembly conversion took %d cycles.\n", elapse_t);
     return EXIT_SUCCESS;
 }

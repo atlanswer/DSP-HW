@@ -17,4 +17,7 @@
 void cvtColor_C(unsigned char const Y, unsigned char const Cb, unsigned char const Cr,
                 unsigned char* const R, unsigned char* const G, unsigned char* const B);
 
+void cvtColor(unsigned char const Y, unsigned char const Cb, unsigned char const Cr,
+              unsigned char* const R, unsigned char* const G, unsigned char* const B);
+
 #endif /** _IMGPROC_H_ **/

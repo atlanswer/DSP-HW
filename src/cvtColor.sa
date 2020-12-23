@@ -11,9 +11,53 @@
 
             .def cvtColor
 cvtColor:   .cproc  Y, Cb, Cr, pR, pG, pB
+            ; Constants for conversion from YCbCr to RGB
+            .reg    Y2RGBI, CB2GI, CB2BI, CR2RI, CR2GI, HALF_MAX_NUM, MAX_NUM
+            ; Initialize constants
+            mvk     19071, Y2RGBI               ; 1.164 << 14
+            mvk     -5636, CB2GI                ; -0.344 << 14
+            mvk     29032, CB2BI                ; 1.772 << 14
+            mvk     22970, CR2RI                ; 1.402 << 14
+            mvk     -11698, CR2GI               ; -0.714 << 14
+            mvk     128, HALF_MAX_NUM
+            mvk     255, MAX_NUM
+            
+            sub     Cb, HALF_MAX_NUM, Cb
+            sub     Cr, HALF_MAX_NUM, Cr
+            mpy     Y, Y2RGBI, Y                ; << 14
 
-            stb     Y, *pR
-            stb     Cb, *pG
-            stb     Cr, *pB
+            ; R
+            .reg    tempR, isrof, isruf
+            mpy     Cr, CR2RI, tempR
+            add     tempR, Y, tempR             ; << 14
+            shr     tempR, 14, tempR
+            cmplt   tempR, 0, isruf
+[isruf]     zero    tempR
+            cmpgt   tempR, MAX_NUM, isrof
+[isrof]     mv      MAX_NUM, tempR
+            ; G
+            .reg    tempG1, tempG2, isgof, isguf
+            mpy     Cb, CB2GI, tempG1
+            add     tempG1, Y, tempG1
+            mpy     Cr, CR2GI, tempG2
+            add     tempG1, tempG2, tempG2      ; << 14
+            shr     tempG2, 14, tempG2
+            cmplt   tempG2, 0, isguf
+[isguf]     zero    tempG2
+            cmpgt   tempG2, MAX_NUM, isgof
+[isgof]     mv      MAX_NUM, tempG2
+            ; B
+            .reg    tempB, isbof, isbuf
+            mpy     Cb, CB2BI, tempB
+            add     tempB, Y, tempB             ; << 14
+            shr     tempB, 14, tempB
+            cmplt   tempB, 0, isbuf
+[isbuf]     zero    tempB
+            cmpgt   tempB, MAX_NUM, isbof
+[isbof]     mv      MAX_NUM, tempB
+            ; Return
+            stb     tempR, *pR
+            stb     tempG2, *pG
+            stb     tempB, *pB
 
             .endproc
