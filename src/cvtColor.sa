@@ -2,13 +2,119 @@
 ; @file cvtColor.sa
 ; @author Atlanswer (atlanswer@gmail.com)
 ; @brief Color conversion function.
-; @version 0.1
-; @date 2020-12-22
+; @version 1.0
+; @date 2020-12-23
 ; 
 ; @copyright Copyright (c) 2020
 ; 
 ;
 
-;            .def cvtColor
-;cvtColor:   .cproc  Y, Cb, Cr, pR, pG, pB
-;            .endproc
+            .def cvtColor
+cvtColor:   .cproc  Y, Cb, Cr, pR, pG, pB
+            ; Constants for conversion from YCbCr to RGB
+            .reg    Y2RGBI, CB2GI, CB2BI, CR2RI, CR2GI, HALF_MAX_NUM, MAX_NUM
+            ; Initialize constants
+            mvk     19071, Y2RGBI               ; 1.164 << 14
+            mvk     -5636, CB2GI                ; -0.344 << 14
+            mvk     29032, CB2BI                ; 1.772 << 14
+            mvk     22970, CR2RI                ; 1.402 << 14
+            mvk     -11698, CR2GI               ; -0.714 << 14
+            mvk     128, HALF_MAX_NUM
+            mvk     255, MAX_NUM
+            ; Common operations
+            sub     Cb, HALF_MAX_NUM, Cb
+            sub     Cr, HALF_MAX_NUM, Cr
+            mpy     Y, Y2RGBI, Y                ; << 14
+            ; R
+            .reg    tmpR, isrof, isruf
+            mpy     Cr, CR2RI, tmpR
+            add     tmpR, Y, tmpR             ; << 14
+            shr     tmpR, 14, tmpR
+            cmplt   tmpR, 0, isruf
+[isruf]     zero    tmpR
+            cmpgt   tmpR, MAX_NUM, isrof
+[isrof]     mv      MAX_NUM, tmpR
+            ; G
+            .reg    tmpG1, tmpG2, isgof, isguf
+            mpy     Cb, CB2GI, tmpG1
+            add     tmpG1, Y, tmpG1
+            mpy     Cr, CR2GI, tmpG2
+            add     tmpG1, tmpG2, tmpG2      ; << 14
+            shr     tmpG2, 14, tmpG2
+            cmplt   tmpG2, 0, isguf
+[isguf]     zero    tmpG2
+            cmpgt   tmpG2, MAX_NUM, isgof
+[isgof]     mv      MAX_NUM, tmpG2
+            ; B
+            .reg    tmpB, isbof, isbuf
+            mpy     Cb, CB2BI, tmpB
+            add     tmpB, Y, tmpB             ; << 14
+            shr     tmpB, 14, tmpB
+            cmplt   tmpB, 0, isbuf
+[isbuf]     zero    tmpB
+            cmpgt   tmpB, MAX_NUM, isbof
+[isbof]     mv      MAX_NUM, tmpB
+            ; Return
+            stb     tmpR, *pR
+            stb     tmpG2, *pG
+            stb     tmpB, *pB
+            .endproc
+
+                .def cvtColor_16b
+cvtColor_16b:   .cproc pYCbCr, pR, pG, pB
+                ; Constants for conversion from YCbCr to RGB
+                .reg    tVct1, tVct2, tVct3, shtVct, NUM_MAX
+                ; tVct1: Conversion matrix row 1
+                mvkl    0x4A005A, tVct1         ; 0 << 6, 1.402 << 6
+                mvkh    0x4A005A, tVct1         ; 1.164 << 6
+                ; tVct2: Conversion matrix row 2
+                mvkl    0x4AEAD2, tVct2         ; -0.344 << 6, -0.714 << 6
+                mvkh    0x4AEAD2, tVct2         ; 1.164 << 6
+                ; tVct3: Conversion matrix row 3
+                mvkl    0x4A7100, tVct3         ; 1.772 << 6, 0 << 6
+                mvkh    0x4A7100, tVct3         ; 1.164 << 6
+                ; shtVct: Chroma shift vector
+                mvkl    0x8080, shtVct          ; 128u, 128u
+                mvkh    0x8080, shtVct
+                ; NUM_MAX: Upper limit
+                mvk     255, NUM_MAX
+                ; YCbCr: Color vector
+                .reg    YCbCr
+                ; 31      23      15       7        0
+                ; |   0   |   Y   |   Cb   |   Cr   |
+                ldw     *pYCbCr, YCbCr
+                ; R
+                .reg    tmpR1, tmpR2, isrof, isruf
+                dotpsu4 tVct1, YCbCr, tmpR1
+                dotpsu4 tVct1, shtVct, tmpR2
+                sub     tmpR1, tmpR2, tmpR2     ; << 6
+                shr     tmpR2, 6, tmpR2
+                cmplt   tmpR2, 0, isruf
+[isruf]         zero    tmpR2
+                cmpgt   tmpR2, NUM_MAX, isrof
+[isrof]         mv      NUM_MAX, tmpR2
+                ; G
+                .reg    tmpG1, tmpG2, isgof, isguf
+                dotpsu4 tVct2, YCbCr, tmpG1
+                dotpsu4 tVct2, shtVct, tmpG2
+                sub     tmpG1, tmpG2, tmpG2     ; << 6
+                shr     tmpG2, 6, tmpG2
+                cmplt   tmpG2, 0, isguf
+[isguf]         zero    tmpG2
+                cmpgt   tmpG2, NUM_MAX, isgof
+[isgof]         mv      NUM_MAX, tmpG2
+                ; B
+                .reg    tmpB1, tmpB2, isbof, isbuf
+                dotpsu4 tVct3, YCbCr, tmpB1
+                dotpsu4 tVct3, shtVct, tmpB2
+                sub     tmpB1, tmpB2, tmpB2     ; << 6
+                shr     tmpB2, 6, tmpB2
+                cmplt   tmpB2, 0, isbuf
+[isbuf]         zero    tmpB2
+                cmpgt   tmpB2, NUM_MAX, isbof
+[isbof]         mv      NUM_MAX, tmpB2
+                ; Return
+                stb     tmpR2, *pR
+                stb     tmpG2, *pG
+                stb     tmpB2, *pB
+                .endproc
