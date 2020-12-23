@@ -11,6 +11,16 @@ Homework for _Principles and Applications of DSP Devices_, SYSU SEIT, Fall 2020.
 |:---:|:---:|:---:|
 |1654442635|1027521855|60202045|
 
+##### YCbCr to RGB Conversion Demo:
+
+```shell
+Enter Y, Cb, Cr (comma seprated): 123, 123, 123
+Y:123, Cb:123, Cr:123
+-- C (floating-point multiply) ---> R:136, G:148, B:134 | took 2595 cycles.
+-- Linear ASM (16-bit multiply) --> R:136, G:148, B:134 | took 38 cycles.
+-- Linear ASM (8-bit multiply) ---> R:135, G:147, B:133 | took 39 cycles.
+```
+
 **欢迎在 [Discussions](https://github.com/atlanswer/DSP-HW/discussions) 讨论，利用 [Issues](https://github.com/atlanswer/DSP-HW/issues) 跟踪代码问题， 以及提交 [PR](https://github.com/atlanswer/DSP-HW/pulls) 分享你的代码。**
 
 ### Useful resources
@@ -106,7 +116,7 @@ Code, build and hit debug!
 
 - [x] 实验 1：用 C 语言实现 8 位 DIB 双线性插值
 - [x] 实验 2：双线性插值函数使用线性汇编语言实现
-- [ ] 实验 3：用 C 语言和线性汇编语言完成从 YC<sub>b</sub>C<sub>r</sub> 彩色空间到 RGB 彩色空间的转换
+- [x] 实验 3：用 C 语言和线性汇编语言完成从 YC<sub>b</sub>C<sub>r</sub> 彩色空间到 RGB 彩色空间的转换
 - [ ] 实验 4：用 C 语言完成线性变换程序并优化
 - [ ] 实验 5：用 C 语言和线性汇编语言实现中值滤波器
 - [ ] 实验 6：通过 DSP/BIOS, 利用 C 语言完成工作
