@@ -2,8 +2,8 @@
  * @file imgproc.c
  * @author Atlanswer (atlanswer@gmail.com)
  * @brief Color conversion function.
- * @version 0.1
- * @date 2020-12-22
+ * @version 1.0
+ * @date 2020-12-23
  * 
  * @copyright Copyright (c) 2020
  * 
