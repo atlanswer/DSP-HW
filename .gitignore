@@ -1,14 +1,9 @@
 # CCS Project Files
 .launches/
 .settings/
-
+# VS Code Settings
+.vscode/
 # Debug
 Debug/
-
 # Release
 Release/
-
-# Resources
-res/
-!res/lena512.bmp
-!res/demo.jpg
