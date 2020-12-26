@@ -2,8 +2,8 @@
  * @file madlad.h
  * @author Atlanswer (atlanswer@gmail.com)
  * @brief Matrix laboratory, but writes as MADLAD.
- * @version 0.1
- * @date 2020-12-23
+ * @version 0.2
+ * @date 2020-12-26
  * 
  * @copyright Copyright (c) 2020
  * 
@@ -25,11 +25,31 @@
 #define S_IRUSR 00400
 #define S_IWUSR 00200
 
-// Buffer
-extern unsigned char mat[25344][4] = {0};
-
+/**
+ * @brief Buffers.
+ * Matrix size: 352 * 288 = 101376
+ * Row: 352 * 288 / 4 = 25344
+ * Loop count: 352 * 288 / 4 / 4 = 6336
+ * @see https://stackoverflow.com/questions/1674032/static-const-vs-define-vs-enum
+ * 
+ */
+enum { H_ROW = 4, H_COL = 4,
+       MATSIZE = 101376U, S_ROW = 25344,
+       LCOUNT = 6336};
+// enum { H_ROW = 4, H_COL = 4,
+//         MATSIZE = 16U, S_ROW = 4,
+//         LCOUNT = 1};
+extern unsigned char src[S_ROW][H_COL];
+extern short buf[H_ROW][H_COL];
+extern short dst[S_ROW][H_COL];
+// Transformation matrix
+extern const char H[H_ROW][H_COL];
+// Transform
+void transform(void);
 // Helper functions
 void parseYUV(const char* restrict const YUVPATH);
-void printMAT(short MAT[][4], unsigned rows);
+void writeYUV(const char* restrict const YUVPATH);
+void printMATs(const short MAT[][H_COL], unsigned rows);
+void printMATuc(unsigned char const MAT[][H_COL], unsigned rows);
 
 #endif /** _MADLAD_H_ **/
