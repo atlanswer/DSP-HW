@@ -61,6 +61,7 @@ void parseYUV(const char* restrict const YUVPATH) {
         exit(EXIT_FAILURE);
     }
     char* buffer = (char*) src[0];
+    setvbuf(fYUV, NULL, _IOFBF, MATSIZE);
     int bytesRead = fread(buffer, 1, MATSIZE, fYUV);
     printf("[parseYUV] %d bytes read.\n", bytesRead);
     // Close file.
@@ -79,8 +80,9 @@ void writeYUV(const char* restrict const YUVPATH) {
         exit(EXIT_FAILURE);
     }
     const char* buffer = (char*) dst[0];
+    setvbuf(fYUV, NULL, _IOFBF, MATSIZE * 2);
     int bytesWritten = fwrite(buffer, 2, MATSIZE, fYUV);
-    printf("[writeYUV] %d bytes written.\n", bytesWritten);
+    printf("[writeYUV] %d halfwords written.\n", bytesWritten);
     int status = fclose(fYUV);
     if (status) {
         perror("[writeYUV] Failed on closing the output file.");

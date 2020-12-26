@@ -34,11 +34,9 @@
  * 
  */
 enum { H_ROW = 4, H_COL = 4,
-       MATSIZE = 101376U, S_ROW = 25344,
-       LCOUNT = 6336};
-// enum { H_ROW = 4, H_COL = 4,
-//         MATSIZE = 16U, S_ROW = 4,
-//         LCOUNT = 1};
+        MATSIZE = 352 * 288,
+        S_ROW = MATSIZE / 4,
+        LCOUNT = S_ROW / 4};
 extern unsigned char src[S_ROW][H_COL];
 extern short buf[H_ROW][H_COL];
 extern short dst[S_ROW][H_COL];
