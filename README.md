@@ -46,6 +46,15 @@ Websites:
 - [TI Processors Wiki](https://processors.wiki.ti.com/)
 - [TI DSP Overview](https://www.ti.com/processors/digital-signal-processors/overview.html)
 
+### Homework List
+
+- [x] 实验 1：用 C 语言实现 8 位 DIB 双线性插值 - `task1-2` 分支
+- [x] 实验 2：双线性插值函数使用线性汇编语言实现 - `task1-2` 分支
+- [x] 实验 3：用 C 语言和线性汇编语言完成从 YC<sub>b</sub>C<sub>r</sub> 彩色空间到 RGB 彩色空间的转换 - `task3` 分支
+- [ ] 实验 4：用 C 语言完成线性变换程序并优化 - `task4` 分支
+- [ ] 实验 5：用 C 语言和线性汇编语言实现中值滤波器
+- [ ] 实验 6：通过 DSP/BIOS, 利用 C 语言完成工作
+
 ### Usage
 
 #### Test environment
@@ -61,19 +70,24 @@ Note: `Texas Instruments Simulators` connection is required to run the CPU cycle
     - Family: C6000
     - Variant: DaVinci DM64x, TMS320DM648
 
-    Target configs are provided in the file `targetConfigs/TMS320DM648.ccxml`
+        Target configs are provided in the file `targetConfigs/TMS320DM648.ccxml`.
 
 - Tool-chain:
     - Output format: eabi (ELF)
     - Device endianness: little
     - Linker command file: `DM648.cmd`
 
-    Modified linker command file is provided as `DM648.cmd`.
+        Modified linker command file is provided as `DM648.cmd`. L2RAM has been increased to 4MB.
 
 - Build
     - C6000 Compiler
         - Include Options: Add `${PROJECT_ROOT}/include`
         - Performance Adviser: `--advise:performance=all`
+        - Advanced Options
+            - Assembler Options: `--keep_asm`
+            
+                Keep the intermediate assembly files to check software pipeline information.
+
     - C6000 Linker
         - Heap size for C/C++ dynamic memory allocation: `--heap_size=0x200000`
 
@@ -87,7 +101,6 @@ Note: `Texas Instruments Simulators` connection is required to run the CPU cycle
         - Debug Options: Full symbolic debug `-g`
         - Advanced Options
             - Predefined Symbols: `--define=DEBUG`
-            - Assembler Options: `--keep_asm`
 
 ##### Release Configuration
 
@@ -111,12 +124,3 @@ Other options are assumed to be default.
 - Define `USE_INT` to switch `resize` function's C implementation to its fixed-point multiplication approach, floating-point multiplication would be used otherwise.
 
 Code, build and hit debug!
-
-### Homework List
-
-- [x] 实验 1：用 C 语言实现 8 位 DIB 双线性插值
-- [x] 实验 2：双线性插值函数使用线性汇编语言实现
-- [x] 实验 3：用 C 语言和线性汇编语言完成从 YC<sub>b</sub>C<sub>r</sub> 彩色空间到 RGB 彩色空间的转换
-- [ ] 实验 4：用 C 语言完成线性变换程序并优化
-- [ ] 实验 5：用 C 语言和线性汇编语言实现中值滤波器
-- [ ] 实验 6：通过 DSP/BIOS, 利用 C 语言完成工作
