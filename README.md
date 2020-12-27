@@ -5,7 +5,7 @@ Homework for _Principles and Applications of DSP Devices_, SYSU SEIT, Fall 2020.
 
 ##### 2x bilinear interpolation Demo:
 
-![Demo](res/demo.jpg)
+![Demo](https://waferlab.tk/res/demo.jpg)
 512 x 1.5 `resize` function cycle count in different implementations (debug mode, optimization not enabled):
 |C float approach|C int approach|Linear assembly|
 |:---:|:---:|:---:|

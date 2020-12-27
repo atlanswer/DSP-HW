@@ -7,3 +7,6 @@
 Debug/
 # Release
 Release/
+# Resource
+res/
+!res/data.yuv
