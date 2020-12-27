@@ -2,8 +2,8 @@
  * @file madlad.c
  * @author Atlanswer (atlanswer@gmail.com)
  * @brief Optimized matrix operation.
- * @version 0.2
- * @date 2020-12-26
+ * @version 0.3
+ * @date 2020-12-27
  * 
  * @copyright Copyright (c) 2020
  * 
@@ -13,17 +13,10 @@
 #include "madlad.h"
 #endif /** _MADLAD_H_ **/
 
-void debugPrintf(const char *fmt, ...) {
-    va_list args;
-    va_start(args, fmt);
-    vfprintf(stderr, fmt, args);
-    va_end(args);
-}
-
-unsigned char src[S_ROW][H_COL] = {0};
+short src[S_ROW][H_COL] = {0};
 short buf[H_ROW][H_COL] = {0};
 short dst[S_ROW][H_COL] = {0};
-const char H[H_ROW][H_COL] = {
+const short H[H_ROW][H_COL] = {
     {1,  1,  1,  1},
     {2,  1, -1, -2},
     {1, -1, -1,  1},
@@ -60,9 +53,14 @@ void parseYUV(const char* restrict const YUVPATH) {
         perror("[parseYUV] Failed to open the YUV file.");
         exit(EXIT_FAILURE);
     }
-    char* buffer = (char*) src[0];
+    short* restrict buffer = (void*) src;
     setvbuf(fYUV, NULL, _IOFBF, MATSIZE);
-    int bytesRead = fread(buffer, 1, MATSIZE, fYUV);
+    int bytesRead = 0, i;
+    unsigned char buf;
+    for (i = 0; i < MATSIZE; ++i) {
+        bytesRead += fread(&buf, 1, 1, fYUV);
+        buffer[i] = (short) buf;
+    }
     printf("[parseYUV] %d bytes read.\n", bytesRead);
     // Close file.
     int status = fclose(fYUV);
@@ -87,25 +85,5 @@ void writeYUV(const char* restrict const YUVPATH) {
     if (status) {
         perror("[writeYUV] Failed on closing the output file.");
         exit(EXIT_FAILURE);
-    }
-}
-
-void printMATs(const short MAT[][H_COL], unsigned rows) {
-    unsigned r, c;
-    for (r = 0; r < rows; ++r) {
-        for (c = 0; c < 4; ++c) {
-            printf("%d\t", MAT[r][c]);
-        }
-        printf("\n");
-    }
-}
-
-void printMATuc(unsigned char const MAT[][H_COL], unsigned rows) {
-    unsigned r, c;
-    for (r = 0; r < rows; ++r) {
-        for (c = 0; c < 4; ++c) {
-            printf("%X\t", MAT[r][c]);
-        }
-        printf("\n");
     }
 }
