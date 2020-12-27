@@ -2,8 +2,8 @@
  * @file madlad.c
  * @author Atlanswer (atlanswer@gmail.com)
  * @brief Optimized matrix operation.
- * @version 0.2
- * @date 2020-12-26
+ * @version 0.3
+ * @date 2020-12-27
  * 
  * @copyright Copyright (c) 2020
  * 
@@ -12,13 +12,6 @@
 #ifndef _MADLAD_H_
 #include "madlad.h"
 #endif /** _MADLAD_H_ **/
-
-void debugPrintf(const char *fmt, ...) {
-    va_list args;
-    va_start(args, fmt);
-    vfprintf(stderr, fmt, args);
-    va_end(args);
-}
 
 unsigned char src[S_ROW][H_COL] = {0};
 short buf[H_ROW][H_COL] = {0};
@@ -87,25 +80,5 @@ void writeYUV(const char* restrict const YUVPATH) {
     if (status) {
         perror("[writeYUV] Failed on closing the output file.");
         exit(EXIT_FAILURE);
-    }
-}
-
-void printMATs(const short MAT[][H_COL], unsigned rows) {
-    unsigned r, c;
-    for (r = 0; r < rows; ++r) {
-        for (c = 0; c < 4; ++c) {
-            printf("%d\t", MAT[r][c]);
-        }
-        printf("\n");
-    }
-}
-
-void printMATuc(unsigned char const MAT[][H_COL], unsigned rows) {
-    unsigned r, c;
-    for (r = 0; r < rows; ++r) {
-        for (c = 0; c < 4; ++c) {
-            printf("%X\t", MAT[r][c]);
-        }
-        printf("\n");
     }
 }
