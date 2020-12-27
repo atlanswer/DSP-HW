@@ -27,11 +27,11 @@ enum { H_ROW = 4, H_COL = 4,
        MATSIZE = 352 * 288,
        S_ROW = MATSIZE / 4,
        LCOUNT = S_ROW / 4};
-extern unsigned char src[S_ROW][H_COL];
+extern short src[S_ROW][H_COL];
 extern short buf[H_ROW][H_COL];
 extern short dst[S_ROW][H_COL];
 // Transformation matrix
-extern const char H[H_ROW][H_COL];
+extern const short H[H_ROW][H_COL];
 // Transform
 void transform(void);
 // Helper functions

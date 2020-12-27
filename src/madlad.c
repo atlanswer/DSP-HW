@@ -13,10 +13,10 @@
 #include "madlad.h"
 #endif /** _MADLAD_H_ **/
 
-unsigned char src[S_ROW][H_COL] = {0};
+short src[S_ROW][H_COL] = {0};
 short buf[H_ROW][H_COL] = {0};
 short dst[S_ROW][H_COL] = {0};
-const char H[H_ROW][H_COL] = {
+const short H[H_ROW][H_COL] = {
     {1,  1,  1,  1},
     {2,  1, -1, -2},
     {1, -1, -1,  1},
@@ -53,9 +53,14 @@ void parseYUV(const char* restrict const YUVPATH) {
         perror("[parseYUV] Failed to open the YUV file.");
         exit(EXIT_FAILURE);
     }
-    char* buffer = (char*) src[0];
+    short* restrict buffer = (void*) src;
     setvbuf(fYUV, NULL, _IOFBF, MATSIZE);
-    int bytesRead = fread(buffer, 1, MATSIZE, fYUV);
+    int bytesRead = 0, i;
+    unsigned char buf;
+    for (i = 0; i < MATSIZE; ++i) {
+        bytesRead += fread(&buf, 1, 1, fYUV);
+        buffer[i] = (short) buf;
+    }
     printf("[parseYUV] %d bytes read.\n", bytesRead);
     // Close file.
     int status = fclose(fYUV);
