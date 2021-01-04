@@ -7,3 +7,7 @@
 Debug/
 # Release
 Release/
+# Resources
+res/
+!res/lena2.bmp
+!res/girl2.bmp

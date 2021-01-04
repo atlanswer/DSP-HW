@@ -1,0 +1,83 @@
+;
+; @file medfilt2.sa
+; @author Atlanswer (atlanswer@gmail.com)
+; @brief Median filter linear assembly implementation.
+; @version 0.2
+; @date 2021-01-04
+; 
+; @copyright Copyright (c) 2021
+; 
+;
+            .def medfilt3
+medfilt3:   .cproc      src, dst, oW, oH
+            ; Row iterator
+            .reg        ri
+            sub         oH, 1, ri       ; oH - 1
+            ; Column iterator
+            .reg        ci
+riter:
+            ; Reset column iterator
+            sub         oW, 1, ci       ; oW - 1
+            ; Set row pointer
+            .reg        pr, pr_
+            ldw         *+src[ri], pr
+            ldw         *+dst[ri], pr_
+citer:
+            ; 3 element buffer
+            .reg        p0, p1, p2
+            ; Neighbor index
+            .reg        ci_l, ci_r
+            ; Overflow detection
+            .reg        isci_rof
+            add         ci, 1, ci_r     ; ci + 1
+            cmpeq       ci_r, oW, isci_rof
+            ; Read pixels
+[isci_rof]  zero        p2
+[!isci_rof] ldbu        *+pr[ci_r], p2
+            ldbu        *+pr[ci], p1
+[!ci]       zero        p0
+[ci]        sub         ci, 1, ci_l     ; ci - 1
+[ci]        ldbu        *+pr[ci_l], p0
+            ; Find the median using sorting network
+            ; o-----^--^--o
+            ;       |  |   
+            ; o--^--|--v--o
+            ;    |  |      
+            ; o--v--v-----o
+            .reg cmp12, cmp02, cmp01
+            .reg tmp1, tmp2, tmp3
+            cmpgt       p1, p2, cmp12
+[cmp12]     mv          p1, tmp1
+[cmp12]     mv          p2, p1
+[cmp12]     mv          tmp1, p2
+            cmpgt       p0, p2, cmp02
+[cmp02]     mv          p0, tmp2
+[cmp02]     mv          p2, p0
+[cmp02]     mv          tmp2, p2
+            cmpgt       p0, p1, cmp01
+[cmp01]     mv          p0, tmp3
+[cmp01]     mv          p1, p0
+[cmp01]     mv          tmp3, p1
+            ; Save the median value
+            stb         p1, *+pr_[ci]
+            ; Iterate columns
+[ci]        bdec        citer, ci
+            ; Iterate rows
+[ri]        bdec        riter, ri
+            .endproc    ; medfilt3
+
+            .def medfilt5
+medfilt5:   .cproc      src, dst, oW, oH
+            ; Row iterator
+            .reg        ri
+            sub         oH, 1, ri       ; oH - 1
+            ; Column iterator
+            .reg        ci
+riter:
+            sub         oW, 1, ci       ; oW - 1
+citer:
+            ; Iterate columns
+[ci]        bdec        citer, ci
+            ; Iterate rows
+[ri]        bdec        riter, ri
+            .endproc    ; medfilt5
