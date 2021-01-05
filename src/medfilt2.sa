@@ -2,8 +2,8 @@
 ; @file medfilt2.sa
 ; @author Atlanswer (atlanswer@gmail.com)
 ; @brief Median filter linear assembly implementation.
-; @version 0.2
-; @date 2021-01-04
+; @version 1.0
+; @date 2021-01-05
 ; 
 ; @copyright Copyright (c) 2021
 ; 
