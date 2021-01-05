@@ -23,7 +23,7 @@ riter:
             ldw         *+src[ri], pr
             ldw         *+dst[ri], pr_
 citer:
-            ; 3 element buffer
+            ; 3-element buffer
             .reg        p0, p1, p2
             ; Neighbor index
             .reg        ci_l, ci_r
@@ -74,8 +74,94 @@ medfilt5:   .cproc      src, dst, oW, oH
             ; Column iterator
             .reg        ci
 riter:
+            ; Reset column iterator
             sub         oW, 1, ci       ; oW - 1
+            ; Set row pointer
+            .reg        pr, pr_
+            ldw         *+src[ri], pr
+            ldw         *+dst[ri], pr_
 citer:
+            ; 5-element buffer
+            .reg        p0, p1, p2, p3, p4
+            ; Neighbor index
+            .reg        ci_l1, ci_l2, ci_r1, ci_r2
+            ; Overflow detection
+            .reg        ci_r2nof, ci_r1nof
+            .reg        ci_l2nuf, ci_l1nuf
+            add         ci, 1, ci_r1    ; ci + 1
+            add         ci, 2, ci_r2    ; ci + 2
+            cmplt       ci_r2, oW, ci_r2nof
+            cmplt       ci_r1, oW, ci_r1nof
+            ; Read pixels
+[!ci_r1nof] zero        p3
+[!ci_r1nof] zero        p4
+[ci_r1nof]  ldbu        *+pr[ci_r1], p3
+[!ci_r2nof] zero        p4
+[ci_r2nof]  ldbu        *+pr[ci_r2], p4
+            ldbu        *+pr[ci], p2
+            cmpgt       ci, 0, ci_l2nuf
+            cmpgt       ci, 1, ci_l1nuf
+[!ci_l2nuf] zero        p0
+[!ci_l2nuf] zero        p1
+[ci_l2nuf]  sub         ci, 1, ci_l2
+[ci_l2nuf]  ldbu        *+pr[ci_l2], p1
+[!ci_l1nuf] zero        p0
+[ci_l1nuf]  sub         ci, 2, ci_l1
+[ci_l1nuf]  ldbu        *+pr[ci_l1], p0
+            ; Find the median using sorting network
+            ; o--^--------^--^-----------o
+            ;    |        |  |            
+            ; o--v--------|--|--^--^--^--o
+            ;             |  |  |  |  |   
+            ; o-----^--^--|--v--|--|--v--o
+            ;       |  |  |     |  |      
+            ; o--^--|--v--v-----|--v-----o
+            ;    |  |           |         
+            ; o--v--v-----------v--------o
+            .reg cmp01, cmp34, cmp24, cmp23
+            .reg cmp14, cmp03, cmp02, cmp13
+            .reg cmp12
+            .reg tmp1, tmp2, tmp3, tmp4
+            .reg tmp5, tmp6, tmp7, tmp8
+            .reg tmp9
+            cmpgt       p0, p1, cmp01
+[cmp01]     mv          p0, tmp1
+[cmp01]     mv          p1, p0
+[cmp01]     mv          tmp1, p1
+            cmpgt       p3, p4, cmp34
+[cmp34]     mv          p3, tmp2
+[cmp34]     mv          p4, p3
+[cmp34]     mv          tmp2, p4
+            cmpgt       p2, p4, cmp24
+[cmp24]     mv          p2, tmp3
+[cmp24]     mv          p4, p2
+[cmp24]     mv          tmp3, p4
+            cmpgt       p2, p3, cmp23
+[cmp23]     mv          p2, tmp4
+[cmp23]     mv          p3, p2
+[cmp23]     mv          tmp4, p3
+            cmpgt       p1, p4, cmp14
+[cmp14]     mv          p1, tmp5
+[cmp14]     mv          p4, p1
+[cmp14]     mv          tmp5, p4
+            cmpgt       p0, p3, cmp03
+[cmp03]     mv          p0, tmp6
+[cmp03]     mv          p3, p0
+[cmp03]     mv          tmp6, p3
+            cmpgt       p0, p2, cmp02
+[cmp02]     mv          p0, tmp7
+[cmp02]     mv          p2, p0
+[cmp02]     mv          tmp7, p2
+            cmpgt       p1, p3, cmp13
+[cmp13]     mv          p1, tmp8
+[cmp13]     mv          p3, p1
+[cmp13]     mv          tmp8, p3
+            cmpgt       p1, p2, cmp12
+[cmp12]     mv          p1, tmp9
+[cmp12]     mv          p2, p1
+[cmp12]     mv          tmp9, p2
+            ; Save the median value
+            stb         p2, *pr_[ci]
             ; Iterate columns
 [ci]        bdec        citer, ci
             ; Iterate rows

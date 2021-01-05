@@ -33,16 +33,19 @@ int main(void) {
     /// Median filtering
     BITMAP lena3 = medfilt2(&lena, 3);
     BITMAP girl3 = medfilt2(&girl, 3);
+    BITMAP girl5 = medfilt2(&girl, 5);
     printf("[main] Median filtering completed.\n");
     // Save images.
     bmSave(&lena3, LENA3PATH);
     bmSave(&girl3, GIRL3PATH);
+    bmSave(&girl5, GIRL5PATH);
     printf("[main] Images saved.\n");
     /// Release the images.
     bmDel(&lena);
     bmDel(&girl);
     bmDel(&lena3);
     bmDel(&girl3);
+    bmDel(&girl5);
 
     printf("[main] Program exited.\n");
     return EXIT_SUCCESS;
