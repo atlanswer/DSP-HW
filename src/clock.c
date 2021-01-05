@@ -1,11 +1,11 @@
 /**
  * @file clock.c
  * @author Atlanswer (atlanswer@gmail.com)
- * @brief 
- * @version 0.1
- * @date 2020-12-23
+ * @brief Cycle counter implementation.
+ * @version 0.2
+ * @date 2021-01-01
  * 
- * @copyright Copyright (c) 2020
+ * @copyright Copyright (c) 2021
  * 
  */
 
@@ -13,7 +13,7 @@
 #include "clock.h"
 #endif /** _CLOCK_H_ **/
 
-clock_t clock() {
+clock_t clock(void) {
     unsigned int low = TSCL;
     unsigned int high = TSCH;
     if (high) return (clock_t) -1;

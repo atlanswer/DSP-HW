@@ -10,6 +10,7 @@
  */
 
 #include <stdio.h>
+#include <stdarg.h>
 
 #ifndef _DEBUG_H_
 #define _DEBUG_H_
