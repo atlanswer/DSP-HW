@@ -71,10 +71,10 @@ trace.logType = "circular";
 bios.LOG_system.bufLen = 512;
 
 /*
- * Create and initialize four TSKs 
+ * Create and initialize two TSKs 
  */
 
-/* var reader0;
+var reader0;
 reader0          = bios.TSK.create("reader0");
 reader0.priority = 1;
 reader0["fxn"]   = prog.extern("reader");
@@ -83,7 +83,7 @@ var writer0;
 writer0          = bios.TSK.create("writer0");
 writer0.priority = 1;
 writer0["fxn"]   = prog.extern("writer");
-writer0.arg0     = 0; */
+writer0.arg0     = 0;
 
 /*
  * Create a mbx
