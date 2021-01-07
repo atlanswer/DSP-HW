@@ -9,13 +9,17 @@
  * 
  */
 
-// Standard headers
-#include <stdio.h>
+// DSP/BIOS API
+#include <std.h>
 #include <stdlib.h>
+#include <log.h>
+#include <mbx.h>
+#include <tsk.h>
 // Custom headers
-
+#include "DSP-HWcfg.h"
 // Main logic
-int main(void) {
-
-    return EXIT_SUCCESS;
+Void main(void) {
+    LOG_printf(&trace, "Hello world!");
+    /* fall into DSP/BIOS idle loop */
+    return;
 }

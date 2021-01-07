@@ -1,0 +1,101 @@
+/**
+ * @file DSP-HW.tcf
+ * @author Atlanswer (atlanswer@gmail.com)
+ * @brief DSP/BIOS configuration script.
+ * @version 0.1
+ * @date 2021-01-07
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
+
+utils.loadPlatform("ti.platforms.evmDM648");
+
+/*
+ * The following DSP/BIOS Features are enabled.
+ */
+
+bios.enableRealTimeAnalysis(prog);
+bios.enableRtdx(prog);
+bios.enableTskManager(prog);
+
+/*
+ * Enable heaps in IRAM and define label SEG0 for heap usage.
+ */
+
+/* bios.IRAM.createHeap      = true;
+bios.IRAM.enableHeapLabel = true;
+bios.IRAM["heapLabel"]    = prog.extern("SEG0");
+bios.IRAM.heapSize        = 0x2000;
+bios.MEM.BIOSOBJSEG = prog.get("IRAM");
+bios.MEM.MALLOCSEG = prog.get("IRAM"); */
+
+/*
+ *  The following statements will enable the MAR bits for MAR 128 to MAR 143. 
+ *  This will make the external memory range (0x80000000-0x8FFFFFFF) cacheable.
+ */
+
+bios.GBL.C64PLUSCONFIGURE = 1;
+bios.GBL.C64PLUSMAR128to159 = 0x0000ffff;
+
+/*
+ *  When using the ARM with DSP, the ARM will share Timer 1 with the DSP.
+ *  The ARM needs to enable power to Timer 1, program the timer for "32-bit unchainded" mode
+ *  and take it out of reset.  The BIOS CLK should be driven with Timer 1 and not reset
+ *  the timer.
+ *
+ *  In most production ARM+DSP systems we recommend removing these 2
+ *  lines and sharing Timer1 with the Arm.  This will free up Timer0 for use by the
+ *  application.
+ *
+ *  The workaround below is used to make the DSP-side applications work "out of the box"
+ *  without any need for coordination with the ARM OS.
+ */
+
+bios.CLK.TIMERSELECT = "Timer 0";      /* Select Timer 0 to drive BIOS CLK */
+bios.CLK.RESETTIMER = true;          /* Take the selected timer our of reset */
+
+/*
+ * Create and initialize a LOG object
+ */
+
+var trace;
+trace         = bios.LOG.create("trace");
+trace.bufLen  = 256;
+trace.logType = "circular";
+
+/*
+ * Set the buffer length of LOG_system buffer
+ */
+
+bios.LOG_system.bufLen = 512;
+
+/*
+ * Create and initialize four TSKs 
+ */
+
+/* var reader0;
+reader0          = bios.TSK.create("reader0");
+reader0.priority = 1;
+reader0["fxn"]   = prog.extern("reader");
+
+var writer0;
+writer0          = bios.TSK.create("writer0");
+writer0.priority = 1;
+writer0["fxn"]   = prog.extern("writer");
+writer0.arg0     = 0; */
+
+/*
+ * Create a mbx
+ */
+
+var mbx;
+mbx             = bios.MBX.create("mbx");
+mbx.messageSize = 8;
+mbx.length      = 2;
+
+// !GRAPHICAL_CONFIG_TOOL_SCRIPT_INSERT_POINT!
+
+if (config.hasReportedError == false) {
+    prog.gen();
+}
