@@ -32,7 +32,8 @@ Documents:
 - [TMS320C6000 Assembly Language Tools v7.4 User's Guide](https://www.ti.com/lit/pdf/spru186)
 - [TMS320C64x/C64x+ DSP CPU and Instruction Set Reference Guide](https://www.ti.com/lit/pdf/spru732)
 - [TMS320C6000 Programmer's Guide](https://www.ti.com/lit/ug/spru198k)
-- [TI-RTOS Kernel (SYS/BIOS) User's Guide](https://www.ti.com/lit/pdf/spruex3)
+- [TMS320 DSP/BIOS v5.42 User's Guide](http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/bios/dspbios/5_42_02_10/exports/docs/docs/spru423i.pdf)
+- [TMS320C6000 DSP/BIOS 5.x API Reference Guide](http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/bios/dspbios/5_42_02_10/exports/docs/docs/spru403s.pdf)
 - [Introduction to TMS320C6000 DSP Optimization](https://www.ti.com/lit/an/sprabf2/sprabf2.pdf)
 - [TMS320C6000 Integer Division](https://www.ti.com/lit/an/spra707/spra707.pdf)
 - [Performance Tuning with the “Restrict” Keyword](https://processors.wiki.ti.com/images/f/ff/Bartley=Wiki_1.1=Performance_Tuning_with_the_RESTRICT_Keyword.pdf)
@@ -42,6 +43,7 @@ Websites:
 - [CCS Resource Index](https://www.ti.com/tool/CCSTUDIO)
 - [CCS Technical Documents](https://software-dl.ti.com/ccs/esd/documents/ccs_documentation-overview.html)
 - [Code Gneration Tools v7.4](https://www.ti.com/tool/download/C6000-CGT-7-4)
+- - [DSP/BIOS 5.42.02.10 Release](http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/bios/dspbios/5_42_02_10/index_FDS.html)
 - [Customizing the clock and time Functions](https://processors.wiki.ti.com/index.php/Customizing_the_clock_and_time_Functions)
 - [TI Processors Wiki](https://processors.wiki.ti.com/)
 - [TI DSP Overview](https://www.ti.com/processors/digital-signal-processors/overview.html)
@@ -60,9 +62,13 @@ Websites:
 #### Test environment
 
 - `Code Composer Studio` v8.3.1 on Windows 10 20H2
-    - `TI Code Gneration Tools` v7.4.24
+    - `TI Code Gneration Tools` v7.4.24 for tasks 1-5
+    - `TI Code Gneration Tools` v7.4.23 for `task 6`
+    - `DSP/BIOS` v5.42.02.10 for `task 6`
 
 Note: `Texas Instruments Simulators` connection is required to run the CPU cycle accurate simulation without the actual development board, which was only existed in CCS prior to v6. This is the reason why the course recommended CCS v5, but it's quite old. However, there is a hack to migrate the software simulation to newer versions of CCS up to v8.3.1, thus I decided to use it. Code Generation Tools v7.4 is the last version of CGT to support C64/C64+, which was released in 2018.
+
+The last version of `DSP/BIOS` is v5.42.02.10. Annoyingly, it's not working with `CGT` v7.4.24 as reported [here](https://e2e.ti.com/support/processors/f/791/t/710939?RTOS-TMS320C6413-DSP-BIOS-configuration-file#pi320966=2). Roll back to `CGT` v7.4.23 or earlier to work with `task6`.
 
 #### CCS Configuration
 
@@ -122,5 +128,13 @@ Other options are assumed to be default.
 
 - Define `USE_SA_IMPL` to link `resize` function's linear assembly implementations, the C implementation would be used otherwise.
 - Define `USE_INT` to switch `resize` function's C implementation to its fixed-point multiplication approach, floating-point multiplication would be used otherwise.
+
+###### Task 6
+
+- Use `CGT` v7.4.23 with `DSP/BIOS` v5.42.02.10
+- Tool-chain:
+    - Output format: Legacy COFF
+    - Linker command file: `<none>`  
+    C6000 EABI is not supported in DSP/BIOS and the memory allocation is controlled by TCF file.
 
 Code, build and hit debug!
