@@ -2,8 +2,8 @@
  * @file DSP-HW.tcf
  * @author Atlanswer (atlanswer@gmail.com)
  * @brief DSP/BIOS configuration script.
- * @version 0.1
- * @date 2021-01-07
+ * @version 0.2
+ * @date 2021-01-08
  * 
  * @copyright Copyright (c) 2021
  * 
@@ -16,19 +16,26 @@ utils.loadPlatform("ti.platforms.evmDM648");
  */
 
 bios.enableRealTimeAnalysis(prog);
-bios.enableRtdx(prog);
-bios.enableTskManager(prog);
+bios.enableMemoryHeaps(prog);
+bios.RTDX.ENABLERTDX = true;
+bios.TSK.ENABLETSK = true;
 
 /*
  * Enable heaps in IRAM and define label SEG0 for heap usage.
  */
 
-/* bios.IRAM.createHeap      = true;
+bios.IRAM.createHeap      = true;
 bios.IRAM.enableHeapLabel = true;
 bios.IRAM["heapLabel"]    = prog.extern("SEG0");
 bios.IRAM.heapSize        = 0x2000;
 bios.MEM.BIOSOBJSEG = prog.get("IRAM");
-bios.MEM.MALLOCSEG = prog.get("IRAM"); */
+bios.MEM.MALLOCSEG = prog.get("IRAM");
+
+/*
+ * Define the RTDX mode
+ */
+
+bios.RTDX.MODE = "Simulator";
 
 /*
  *  The following statements will enable the MAR bits for MAR 128 to MAR 143. 
@@ -56,13 +63,18 @@ bios.CLK.TIMERSELECT = "Timer 0";      /* Select Timer 0 to drive BIOS CLK */
 bios.CLK.RESETTIMER = true;          /* Take the selected timer our of reset */
 
 /*
- * Create and initialize a LOG object
+ * Create and initialize LOG objects
  */
 
-var trace;
-trace         = bios.LOG.create("trace");
-trace.bufLen  = 256;
-trace.logType = "circular";
+// Log random characters
+var randCharLog     = bios.LOG.create("randCharLog");
+randCharLog.bufLen  = 256;
+randCharLog.logType = "circular";
+
+// Log counter
+var ctrLog      = bios.LOG.create("ctrLog");
+ctrLog.bufLen   = 256;
+ctrLog.logType  = "circular";
 
 /*
  * Set the buffer length of LOG_system buffer
@@ -71,28 +83,39 @@ trace.logType = "circular";
 bios.LOG_system.bufLen = 512;
 
 /*
- * Create and initialize two TSKs 
+ * Create and initialize TSKs 
  */
 
-var reader0;
-reader0          = bios.TSK.create("reader0");
-reader0.priority = 1;
-reader0["fxn"]   = prog.extern("reader");
+var rdrRandChar         = bios.TSK.create("rdrRandChar");
+rdrRandChar.fxn         = prog.extern("readRandChar");
+rdrRandChar.priority    = 1;
 
-var writer0;
-writer0          = bios.TSK.create("writer0");
-writer0.priority = 1;
-writer0["fxn"]   = prog.extern("writer");
-writer0.arg0     = 0;
+var wtrRandChar         = bios.TSK.create("wtrRandChar");
+wtrRandChar.fxn         = prog.extern("genRandChar");
+wtrRandChar.priority    = 1;
 
 /*
  * Create a mbx
  */
 
-var mbx;
-mbx             = bios.MBX.create("mbx");
+var mbx         = bios.MBX.create("mbx");
 mbx.messageSize = 8;
 mbx.length      = 2;
+
+/*
+ * Create a software generator driver
+ */
+
+var DGN_rand        = bios.DGN.create("DGN_rand");
+DGN_rand.device     = "random";
+DGN_rand.seedValue  = 17309115;
+DGN_rand.lowerLimit = 65;
+DGN_rand.upperLimit = 90;
+
+var SIO_rand        = bios.SIO.create("SIO_rand");
+SIO_rand.deviceName = prog.get("DGN_rand");
+SIO_rand.mode       = "output";
+SIO_rand.bufSize    = 1;
 
 // !GRAPHICAL_CONFIG_TOOL_SCRIPT_INSERT_POINT!
 
