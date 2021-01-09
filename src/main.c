@@ -19,7 +19,7 @@
 #include "DSP-HWcfg.h"
 
 // Number of messages
-const int NUM_MSGS = 3;
+const int NUM_MSGS = 100;
 const int TIMEOUT = 1;
 
 /**
@@ -43,9 +43,9 @@ Void main(void) {
 }
 
 Void readRandChar(Arg id_arg) {
-    MsgObj msg;
     Int id = ArgToInt(id_arg);
     LOG_printf(&randCharLog, "[readRandChar](%d) spawned.", id);
+    MsgObj msg;
     while (TRUE) {
         // Wait for mailbox
         if (MBX_pend(&mbx, &msg, TIMEOUT) == FALSE) {
@@ -53,21 +53,33 @@ Void readRandChar(Arg id_arg) {
             break;
         }
         LOG_printf(&randCharLog,
-                   "[readRandChar](%d) Read '%c' form (%d).", id, msg.val, msg.id);
+                   "[readRandChar](%d) read '%c' form genRandChar(%d).", id, msg.val, msg.id);
     }
     LOG_printf(&randCharLog, "[readRandChar](%d) died.");
 }
 
 Void genRandChar(Arg id_arg) {
-    MsgObj msg;
-    Int cMsg;
     Int id = ArgToInt(id_arg);
     LOG_printf(&randCharLog, "[genRandChar](%d) spawned.", id);
+    MsgObj msg;
+    Int cMsg;
+    Char* buf;
+    Int status = SIO_staticbuf(&SIO_rand, (Ptr*) &buf);
+    if (status < SYS_OK) {
+        SYS_abort("[genRandChar](%d) Could not acquire static frame.", id);
+    }
     for (cMsg = 0; cMsg < NUM_MSGS; ++cMsg) {
         msg.id = id;
-        msg.val = 'a' + cMsg;
+        if (SIO_get(&SIO_rand, (Ptr*) &buf) < 0) {
+            SYS_abort("[genRandChar](%d) Error reading buffer.", id);
+        }
+        if (buf[0] > 'Z') {
+            buf[0] = buf[0] - 'Z' + '`';
+        }
+        msg.val = buf[0];
         if (MBX_post(&mbx, &msg, TIMEOUT) == FALSE) {
-            LOG_printf(&randCharLog, "[genRandChar](%d) Mailbox full.", id);
+            LOG_printf(&randCharLog,
+                       "[genRandChar](%d) Mailbox full till timeout.", id);
             continue;
         }
         LOG_printf(&randCharLog,
