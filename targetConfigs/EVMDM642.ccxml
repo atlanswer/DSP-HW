@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<configurations XML_version="1.2" id="configurations_0">
+    <configuration XML_version="1.2" id="configuration_0">
+        <instance XML_version="1.2" desc="Texas Instruments Simulator" href="connections/tisim_connection.xml" id="Texas Instruments Simulator" xml="tisim_connection.xml" xmlpath="connections"/>
+        <connection XML_version="1.2" id="Texas Instruments Simulator">
+            <instance XML_version="1.2" href="drivers/tisim_c64xx.xml" id="drivers" xml="tisim_c64xx.xml" xmlpath="drivers"/>
+            <platform XML_version="1.2" id="platform_0">
+                <instance XML_version="1.2" desc="EVMDM642" href="boards/evmdm642.xml" id="EVMDM642" xml="evmdm642.xml" xmlpath="boards"/>
+            <board XML_version="1.2" description="Spectrum Digital DM642 EVM Board" id="EVMDM642">
+                    <device HW_revision="1" XML_version="1.2" description="TMS320DM642 - C64x Fixed-point DSP" id="DM642_0" partnum="TMS320DM642">
+                        <cpu HW_revision="1.0" XML_version="1.2" description="C64xx CPU" id="C64x" isa="TMS320C64XX">
+                            <property Type="filepathfield" Value="..\..\emulation\boards\evmdm642\gel\EVMDM642.gel" id="GEL File"/>
+                            <property Type="stringfield" Value="Little Endian" id="Endianness"/>
+                        </cpu>
+                    </device>
+                </board>
+            </platform>
+        </connection>
+    </configuration>
+</configurations>

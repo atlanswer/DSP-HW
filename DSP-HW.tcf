@@ -9,7 +9,7 @@
  * 
  */
 
-utils.loadPlatform("ti.platforms.evmDM648");
+utils.loadPlatform("ti.platforms.sim64xx");
 
 /*
  * The following DSP/BIOS Features are enabled.
@@ -38,15 +38,6 @@ bios.MEM.MALLOCSEG = prog.get("IRAM");
 bios.RTDX.MODE = "Simulator";
 
 /*
- *  The following statements will enable the MAR bits for MAR 128 to MAR 143. 
- *  This will make the external memory range (0x80000000-0x8FFFFFFF) cacheable.
- */
-
-
-bios.GBL.C64PLUSCONFIGURE = 1;
-bios.GBL.C64PLUSMAR128to159 = 0x0000ffff;
-
-/*
  *  When using the ARM with DSP, the ARM will share Timer 1 with the DSP.
  *  The ARM needs to enable power to Timer 1, program the timer for "32-bit unchainded" mode
  *  and take it out of reset.  The BIOS CLK should be driven with Timer 1 and not reset
@@ -61,12 +52,7 @@ bios.GBL.C64PLUSMAR128to159 = 0x0000ffff;
  */
 
 bios.CLK.TIMERSELECT = "Timer 0";      /* Select Timer 0 to drive BIOS CLK */
-bios.CLK.RESETTIMER = true;          /* Take the selected timer our of reset */
-bios.CLK.ENABLEHTIME = true;
-bios.CLK.HIRESTIME = true;
 bios.CLK.MICROSECONDS = 1000;
-bios.CLK.SPECIFYRATE = true;
-bios.CLK.INPUTCLK = 100.0000;
 
 /*
  * Create and initialize LOG objects
@@ -74,19 +60,19 @@ bios.CLK.INPUTCLK = 100.0000;
 
 // Log random characters
 var randCharLog     = bios.LOG.create("randCharLog");
-randCharLog.bufLen  = 1024;
+randCharLog.bufLen  = 256;
 randCharLog.logType = "circular";
 
 // Log counter
 var ctrLog      = bios.LOG.create("ctrLog");
-ctrLog.bufLen   = 1024;
+ctrLog.bufLen   = 128;
 ctrLog.logType  = "circular";
 
 /*
  * Set the buffer length of LOG_system buffer
  */
 
-bios.LOG_system.bufLen = 1024;
+bios.LOG_system.bufLen = 512;
 
 /*
  * Create and initialize task manager
@@ -99,10 +85,6 @@ rdrRandChar.priority    = 1;
 var wtrRandChar         = bios.TSK.create("wtrRandChar");
 wtrRandChar.fxn         = prog.extern("genRandChar");
 wtrRandChar.priority    = 1;
-
-// var counter         = bios.TSK.create("counter");
-// counter.fxn         = prog.extern("incLogCounter");
-// counter.priority    = 1;
 
 /*
  * Create a mailbox manager
@@ -140,10 +122,9 @@ bios.PRD.USECLK = true;
 var prdCtr = bios.PRD.create("prdCtr");
 prdCtr.period = 1000;
 prdCtr.mode = "continuous";
-prdCtr.fxn = prog.extern("my_prd");
+prdCtr.fxn = prog.extern("incLogCounter");
 prdCtr.order = 1;
 
-bios.TSK.STACKSIZE = 4096;
 // !GRAPHICAL_CONFIG_TOOL_SCRIPT_INSERT_POINT!
 
 if (config.hasReportedError == false) {

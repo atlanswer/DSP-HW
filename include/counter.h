@@ -20,7 +20,8 @@
 #ifndef _COUNTER_H_
 #define _COUNTER_H_
 
+extern Uns counter;
+
 Void incLogCounter(Void);
-Void my_prd(Void);
 
 #endif /* _COUNTER_H_ */

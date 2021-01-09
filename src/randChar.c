@@ -13,8 +13,8 @@
 #include "randChar.h"
 #endif /* _RANDCHAR_H_ */
 
-const int NUM_MSGS = 100;
-const int TIMEOUT = 1;
+const int NUM_MSGS = 10;
+const int TIMEOUT = 10;
 
 Void readRandChar(Arg id_arg) {
     Int id = ArgToInt(id_arg);
@@ -23,7 +23,7 @@ Void readRandChar(Arg id_arg) {
     while (TRUE) {
         // Wait for mailbox
         if (MBX_pend(&mbx, &msg, TIMEOUT) == FALSE) {
-            LOG_printf(&randCharLog, "[readRandChar](%d) Mailbox timeout.", id);
+            LOG_printf(&randCharLog, "[readRandChar](%d) timeout.", id);
             break;
         }
         LOG_printf(&randCharLog,
@@ -31,6 +31,7 @@ Void readRandChar(Arg id_arg) {
         TSK_yield();
     }
     LOG_printf(&randCharLog, "[readRandChar](%d) died.");
+    TSK_exit();
 }
 
 Void genRandChar(Arg id_arg) {
@@ -62,4 +63,5 @@ Void genRandChar(Arg id_arg) {
         TSK_yield();
     }
     LOG_printf(&randCharLog, "[genRandChar](%d) died.", id);
+    TSK_exit();
 }

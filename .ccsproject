@@ -2,16 +2,15 @@
 <?ccsproject version="1.0"?>
 <projectOptions>
 	<ccsVersion value="8.3.0"/>
-	<deviceVariant value="TMS320C64XX.TMS320DM648"/>
+	<deviceVariant value="TMS320C64XX.TMS320DM642.EVMDM642"/>
 	<deviceFamily value="C6000"/>
 	<deviceEndianness value="little"/>
-	<codegenToolVersion value="7.4.24"/>
-	<isElfFormat value="true"/>
-	<connection value="common/targetdb/connections/DataSnapshotViewer.xml"/>
-	<linkerCommandFile value="DM648.cmd"/>
+	<codegenToolVersion value="7.4.23"/>
+	<isElfFormat value="false"/>
+	<connection value="common/targetdb/connections/tisim_connection.xml"/>
 	<rts value="libc.a"/>
 	<createSlaveProjects value=""/>
-	<templateProperties value="id=com.ti.ccstudio.project.templates.helloWorld"/>
-	<filesToOpen value="hello.c"/>
-	<isTargetManual value="true"/>
+	<templateProperties value="id=com.ti.rtsc.DSPBIOS.example_193,type=bios5,products=com.ti.rtsc.DSPBIOS"/>
+	<filesToOpen value=""/>
+	<isTargetManual value="false"/>
 </projectOptions>

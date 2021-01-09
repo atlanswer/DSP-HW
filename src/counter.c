@@ -13,16 +13,9 @@
 #include "counter.h"
 #endif /* COUNTER_H_ */
 
-Void incLogCounter(Void) {
-    Uns counter = 0;
-    LgUns currtimes = 0;
-    while (TRUE) {
-        currtimes = CLK_getltime();
-        LOG_printf(&ctrLog, "T: 0x%x", currtimes);
-        TSK_yield();
-    }
-}
+Uns counter = 0;
 
-Void my_prd(Void) {
-    LOG_printf(&ctrLog, "In periodic function my_prd()");
+Void incLogCounter(Void) {
+    ++counter;
+    LOG_printf(&ctrLog, "[incLogCounter] Counter = %d.", counter);
 }
