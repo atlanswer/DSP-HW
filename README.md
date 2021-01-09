@@ -43,7 +43,7 @@ Websites:
 - [CCS Resource Index](https://www.ti.com/tool/CCSTUDIO)
 - [CCS Technical Documents](https://software-dl.ti.com/ccs/esd/documents/ccs_documentation-overview.html)
 - [Code Gneration Tools v7.4](https://www.ti.com/tool/download/C6000-CGT-7-4)
-- - [DSP/BIOS 5.42.02.10 Release](http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/bios/dspbios/5_42_02_10/index_FDS.html)
+- [DSP/BIOS 5.42.02.10 Release](http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/bios/dspbios/5_42_02_10/index_FDS.html)
 - [Customizing the clock and time Functions](https://processors.wiki.ti.com/index.php/Customizing_the_clock_and_time_Functions)
 - [TI Processors Wiki](https://processors.wiki.ti.com/)
 - [TI DSP Overview](https://www.ti.com/processors/digital-signal-processors/overview.html)

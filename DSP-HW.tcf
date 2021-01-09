@@ -2,8 +2,8 @@
  * @file DSP-HW.tcf
  * @author Atlanswer (atlanswer@gmail.com)
  * @brief DSP/BIOS configuration script.
- * @version 0.2
- * @date 2021-01-08
+ * @version 0.3
+ * @date 2021-01-09
  * 
  * @copyright Copyright (c) 2021
  * 
@@ -42,6 +42,7 @@ bios.RTDX.MODE = "Simulator";
  *  This will make the external memory range (0x80000000-0x8FFFFFFF) cacheable.
  */
 
+
 bios.GBL.C64PLUSCONFIGURE = 1;
 bios.GBL.C64PLUSMAR128to159 = 0x0000ffff;
 
@@ -61,6 +62,11 @@ bios.GBL.C64PLUSMAR128to159 = 0x0000ffff;
 
 bios.CLK.TIMERSELECT = "Timer 0";      /* Select Timer 0 to drive BIOS CLK */
 bios.CLK.RESETTIMER = true;          /* Take the selected timer our of reset */
+bios.CLK.ENABLEHTIME = true;
+bios.CLK.HIRESTIME = true;
+bios.CLK.MICROSECONDS = 1000;
+bios.CLK.SPECIFYRATE = true;
+bios.CLK.INPUTCLK = 100.0000;
 
 /*
  * Create and initialize LOG objects
@@ -83,7 +89,7 @@ ctrLog.logType  = "circular";
 bios.LOG_system.bufLen = 1024;
 
 /*
- * Create and initialize TSKs 
+ * Create and initialize task manager
  */
 
 var rdrRandChar         = bios.TSK.create("rdrRandChar");
@@ -94,13 +100,17 @@ var wtrRandChar         = bios.TSK.create("wtrRandChar");
 wtrRandChar.fxn         = prog.extern("genRandChar");
 wtrRandChar.priority    = 1;
 
+// var counter         = bios.TSK.create("counter");
+// counter.fxn         = prog.extern("incLogCounter");
+// counter.priority    = 1;
+
 /*
- * Create a mailbox
+ * Create a mailbox manager
  */
 
 var mbx         = bios.MBX.create("mbx");
-mbx.messageSize = 8;
-mbx.length      = 2;
+mbx.messageSize = 16;
+mbx.length      = 1;
 
 /*
  * Create a random number software generator driver
@@ -114,15 +124,26 @@ DGN_rand.lowerLimit = "A".charCodeAt();
 DGN_rand.upperLimit = "A".charCodeAt() + 51;
 
 /*
- * Create a stream i/o
+ * Create a stream i/o manager
  */
 
 var SIO_rand        = bios.SIO.create("SIO_rand");
 SIO_rand.deviceName = prog.get("DGN_rand");
 SIO_rand.mode       = "input";
 SIO_rand.bufSize    = 8;
-// SIO_rand.allocStaticBuf = true;
 
+/*
+ * Create a periodic function manager
+ */
+
+bios.PRD.USECLK = true;
+var prdCtr = bios.PRD.create("prdCtr");
+prdCtr.period = 1000;
+prdCtr.mode = "continuous";
+prdCtr.fxn = prog.extern("my_prd");
+prdCtr.order = 1;
+
+bios.TSK.STACKSIZE = 4096;
 // !GRAPHICAL_CONFIG_TOOL_SCRIPT_INSERT_POINT!
 
 if (config.hasReportedError == false) {
