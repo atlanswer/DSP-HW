@@ -8,6 +8,6 @@ Debug/
 # Release
 Release/
 # Resources
-# res/
+res/
 !res/girl2.bmp
 !res/lena2.bmp
