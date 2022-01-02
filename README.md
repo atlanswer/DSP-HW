@@ -5,7 +5,7 @@ Homework for _Principles and Applications of DSP Devices_, SYSU SEIT, Fall 2020.
 
 ##### 2x bilinear interpolation Demo:
 
-![Demo](https://waferlab.tk/res/demo.jpg)
+![Demo](res/demo.jpg)
 
 512 x 1.5 `resize` function cycle count in different implementations (debug mode, optimization not enabled):
 |C float approach|C int approach|Linear assembly|
@@ -22,7 +22,7 @@ Y:123, Cb:123, Cr:123
 -- Linear ASM (8-bit multiply) ---> R:135, G:147, B:133 | took 39 cycles.
 ```
 
-**欢迎在 [Discussions](https://github.com/atlanswer/DSP-HW/discussions) 讨论，利用 [Issues](https://github.com/atlanswer/DSP-HW/issues) 跟踪代码问题， 以及提交 [PR](https://github.com/atlanswer/DSP-HW/pulls) 分享你的代码。**
+**欢迎讨论**
 
 ### Useful resources
 
